@@ -3,12 +3,22 @@ import { cookies } from "next/headers"
 import clientPromise from "@/lib/mongodb"
 
 async function verifyAdmin() {
-  const authCookie = cookies().get("admin-auth")
-  return authCookie && authCookie.value === "authenticated"
+  try {
+    const cookieStore = cookies()
+    const authCookie = cookieStore.get("admin-auth")
+    return authCookie && authCookie.value === "authenticated"
+  } catch (error) {
+    // During build time, cookies might not be available
+    return false
+  }
 }
 
 export async function GET() {
   try {
+    if (process.env.NODE_ENV === "production" && !process.env.MONGODB_URI) {
+      return NextResponse.json({ error: "Database not configured" }, { status: 500 })
+    }
+
     if (!verifyAdmin()) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }

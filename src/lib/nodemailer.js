@@ -1,24 +1,37 @@
 import nodemailer from "nodemailer"
 
-const transporter = nodemailer.createTransporter({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_APP_PASSWORD,
-  },
-})
+const emailUser = process.env.EMAIL_USER
+const emailPassword = process.env.EMAIL_APP_PASSWORD
+
+let transporter = null
+
+if (emailUser && emailPassword) {
+  transporter = nodemailer.createTransporter({
+    service: "gmail",
+    auth: {
+      user: emailUser,
+      pass: emailPassword,
+    },
+  })
+} else {
+  console.warn("Email configuration not complete - EMAIL_USER and EMAIL_APP_PASSWORD required")
+}
 
 export const sendThankYouEmail = async (userEmail, userName) => {
+  if (!transporter) {
+    throw new Error("Email transporter not configured")
+  }
+
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: emailUser,
     to: userEmail,
-    subject: "Thank You for Contacting Bright Future School",
+    subject: "Thank You for Contacting Chhatrapati Shivaji +2 High School",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
         <!-- Header -->
         <div style="background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%); padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0;">
-          <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">Bright Future School</h1>
-          <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 16px;">Excellence in Education Since 1985</p>
+          <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">Chhatrapati Shivaji +2 High School</h1>
+          <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 16px;">Excellence in Education</p>
         </div>
         
         <!-- Content -->
@@ -26,41 +39,24 @@ export const sendThankYouEmail = async (userEmail, userName) => {
           <h2 style="color: #4b5563; margin: 0 0 20px 0; font-size: 24px;">Thank You, ${userName}!</h2>
           
           <p style="color: #4b5563; line-height: 1.6; margin: 0 0 20px 0; font-size: 16px;">
-            We have received your inquiry and appreciate your interest in Bright Future School. 
-            Our admissions team will review your message and get back to you within 24-48 hours.
-          </p>
-          
-          <p style="color: #4b5563; line-height: 1.6; margin: 0 0 30px 0; font-size: 16px;">
-            In the meantime, feel free to explore our website to learn more about our programs, 
-            facilities, and the bright future we can help build for your child.
+            We have received your inquiry and appreciate your interest in Chhatrapati Shivaji +2 High School. 
+            Our team will review your message and get back to you within 24-48 hours.
           </p>
           
           <!-- Contact Info Card -->
           <div style="background-color: white; padding: 25px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 30px 0;">
             <h3 style="color: #4b5563; margin: 0 0 15px 0; font-size: 18px; font-weight: bold;">Contact Information:</h3>
             <div style="color: #4b5563; line-height: 1.8; font-size: 14px;">
-              <p style="margin: 5px 0;"><strong>📞 Phone:</strong> +1 (555) 123-4567</p>
-              <p style="margin: 5px 0;"><strong>✉️ Email:</strong> info@brightfuture.edu</p>
-              <p style="margin: 5px 0;"><strong>📍 Address:</strong> 123 Education Street, Learning City, LC 12345</p>
-              <p style="margin: 5px 0;"><strong>🕒 Office Hours:</strong> Monday - Friday: 8:00 AM - 5:00 PM</p>
+              <p style="margin: 5px 0;"><strong>📞 Phone:</strong> +91 86512 86714</p>
+              <p style="margin: 5px 0;"><strong>✉️ Email:</strong> chatrapatishivaji4321@gmail.com</p>
             </div>
-          </div>
-          
-          <!-- Call to Action -->
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="#" style="background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
-              Visit Our Website
-            </a>
           </div>
         </div>
         
         <!-- Footer -->
         <div style="background-color: #4b5563; padding: 20px; text-align: center; border-radius: 0 0 8px 8px;">
           <p style="color: white; margin: 0; font-size: 14px;">
-            © 2024 Bright Future School. All rights reserved.
-          </p>
-          <p style="color: rgba(255,255,255,0.7); margin: 8px 0 0 0; font-size: 12px;">
-            Building bright futures through excellence in education.
+            © 2024 Chhatrapati Shivaji +2 High School. All rights reserved.
           </p>
         </div>
       </div>
@@ -71,16 +67,25 @@ export const sendThankYouEmail = async (userEmail, userName) => {
 }
 
 export const sendLeadEmail = async (leadData) => {
+  if (!transporter) {
+    throw new Error("Email transporter not configured")
+  }
+
+  const adminEmail = process.env.ADMIN_EMAIL
+  if (!adminEmail) {
+    throw new Error("ADMIN_EMAIL not configured")
+  }
+
   const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: process.env.ADMIN_EMAIL,
-    subject: "🎓 New Lead - Bright Future School Website",
+    from: emailUser,
+    to: adminEmail,
+    subject: "🎓 New Lead - Chhatrapati Shivaji +2 High School",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
         <!-- Header -->
         <div style="background: linear-gradient(135deg, #3b82f6 0%, #f59e0b 100%); padding: 25px 20px; text-align: center; border-radius: 8px 8px 0 0;">
           <h1 style="color: white; margin: 0; font-size: 24px; font-weight: bold;">🎓 New Lead Received</h1>
-          <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 14px;">Bright Future School Admin Panel</p>
+          <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 14px;">Chhatrapati Shivaji +2 High School</p>
         </div>
         
         <!-- Content -->
@@ -116,25 +121,12 @@ export const sendLeadEmail = async (leadData) => {
               <strong>📅 Submitted on:</strong> ${new Date(leadData.createdAt).toLocaleString()}
             </p>
           </div>
-          
-          <!-- Action Buttons -->
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="#" style="background-color: #3b82f6; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; margin: 0 10px;">
-              View in Admin Panel
-            </a>
-            <a href="mailto:${leadData.email}" style="background-color: #10b981; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; margin: 0 10px;">
-              Reply to Lead
-            </a>
-          </div>
         </div>
         
         <!-- Footer -->
         <div style="background-color: #4b5563; padding: 20px; text-align: center; border-radius: 0 0 8px 8px;">
           <p style="color: white; margin: 0; font-size: 14px;">
-            Bright Future School Admin Notification System
-          </p>
-          <p style="color: rgba(255,255,255,0.7); margin: 8px 0 0 0; font-size: 12px;">
-            This is an automated message. Please do not reply to this email.
+            Chhatrapati Shivaji +2 High School Admin Notification
           </p>
         </div>
       </div>

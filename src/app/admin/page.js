@@ -108,7 +108,7 @@ export default function AdminLoginPage() {
 
           <div className="text-center">
             <p className="text-xs text-muted-foreground">
-              For security purposes, please contact IT support if you've forgotten your credentials.
+              For security purposes, please contact IT support if you have forgotten your credentials.
             </p>
           </div>
         </CardContent>

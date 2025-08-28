@@ -25,6 +25,8 @@ export default function GalleryPage() {
       if (response.ok) {
         const data = await response.json()
         setImages(data)
+      } else {
+        console.error("Failed to fetch images:", response.status)
       }
     } catch (error) {
       console.error("Error fetching images:", error)
@@ -34,7 +36,10 @@ export default function GalleryPage() {
   }
 
   const filteredImages = images.filter((image) => {
-    return filterCategory === "all" || image.category.toLowerCase() === filterCategory.toLowerCase()
+    return (
+      filterCategory === "all" ||
+      (image.category && image.category.toLowerCase() === filterCategory.toLowerCase())
+    )
   })
 
   const categories = ["all", "academic", "facilities", "sports", "arts", "events", "campus life"]
@@ -69,10 +74,18 @@ export default function GalleryPage() {
             ))}
           </div>
           <div className="flex gap-2">
-            <Button variant={viewMode === "grid" ? "default" : "outline"} size="sm" onClick={() => setViewMode("grid")}>
+            <Button
+              variant={viewMode === "grid" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("grid")}
+            >
               <Grid className="h-4 w-4" />
             </Button>
-            <Button variant={viewMode === "list" ? "default" : "outline"} size="sm" onClick={() => setViewMode("list")}>
+            <Button
+              variant={viewMode === "list" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("list")}
+            >
               <List className="h-4 w-4" />
             </Button>
           </div>
@@ -97,11 +110,11 @@ export default function GalleryPage() {
               >
                 {filteredImages.map((image) => (
                   <ImageCard
-                    key={image.id}
+                    key={image.id || image._id}
                     src={image.url || "/placeholder.svg"}
-                    alt={image.title}
-                    title={image.title}
-                    description={image.description}
+                    alt={image.title || "School image"}
+                    title={image.title || "Untitled"}
+                    description={image.description || ""}
                     aspectRatio={viewMode === "list" ? "aspect-video" : "aspect-square"}
                   />
                 ))}

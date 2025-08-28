@@ -16,76 +16,42 @@ export default function NoticesPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterCategory, setFilterCategory] = useState("all")
 
-  // Sample notices data - in real app, this would come from API
+  // Fetch notices from API
   useEffect(() => {
-    const sampleNotices = [
-      {
-        id: 1,
-        title: "Winter Break Schedule 2024",
-        content:
-          "School will be closed from December 23, 2024, to January 8, 2025. Classes will resume on January 9, 2025. Enjoy your holidays!",
-        date: "2024-12-01",
-        category: "Academic",
-        priority: "high",
-      },
-      {
-        id: 2,
-        title: "Parent-Teacher Conference",
-        content:
-          "Parent-teacher conferences are scheduled for December 15-16, 2024. Please contact your child's teacher to schedule an appointment.",
-        date: "2024-11-28",
-        category: "Events",
-        priority: "normal",
-      },
-      {
-        id: 3,
-        title: "Science Fair Registration Open",
-        content:
-          "Registration for the annual Science Fair is now open. Students can submit their project proposals until January 15, 2025.",
-        date: "2024-11-25",
-        category: "Academic",
-        priority: "normal",
-      },
-      {
-        id: 4,
-        title: "New Library Hours",
-        content:
-          "Starting December 1, 2024, the library will be open from 7:30 AM to 6:00 PM on weekdays and 9:00 AM to 3:00 PM on Saturdays.",
-        date: "2024-11-20",
-        category: "General",
-        priority: "low",
-      },
-      {
-        id: 5,
-        title: "Emergency Drill Schedule",
-        content:
-          "Fire and earthquake drills will be conducted on December 10, 2024. Please review safety procedures with your children.",
-        date: "2024-11-18",
-        category: "Safety",
-        priority: "high",
-      },
-      {
-        id: 6,
-        title: "Holiday Concert Invitation",
-        content:
-          "Join us for our annual Holiday Concert on December 20, 2024, at 7:00 PM in the school auditorium. All families are welcome!",
-        date: "2024-11-15",
-        category: "Events",
-        priority: "normal",
-      },
-    ]
+    const fetchNotices = async () => {
+      console.log("📡 Fetching notices from /api/notices...")
+      try {
+        const res = await fetch("/api/notices")
+        console.log("✅ Fetch response status:", res.status)
 
-    setTimeout(() => {
-      setNotices(sampleNotices)
-      setLoading(false)
-    }, 1000)
+        if (res.ok) {
+          const data = await res.json()
+          console.log("📥 Notices received:", data)
+          setNotices(data)
+        } else {
+          console.error("❌ Fetch failed with status:", res.status)
+        }
+      } catch (error) {
+        console.error("🚨 Error fetching notices:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchNotices()
   }, [])
 
+  // Filter by search + category
   const filteredNotices = notices.filter((notice) => {
     const matchesSearch =
       notice.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       notice.content.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = filterCategory === "all" || notice.category.toLowerCase() === filterCategory.toLowerCase()
+
+    const matchesCategory =
+      filterCategory === "all" ||
+      (notice.category &&
+        notice.category.toLowerCase() === filterCategory.toLowerCase())
+
     return matchesSearch && matchesCategory
   })
 
@@ -104,7 +70,7 @@ export default function NoticesPage() {
         </div>
       </ContentSection>
 
-      {/* Search and Filter */}
+      {/* Search + Filter */}
       <ContentSection background="muted" padding="sm">
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative flex-1 max-w-md">
@@ -145,7 +111,7 @@ export default function NoticesPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredNotices.map((notice) => (
                   <NoticeCard
-                    key={notice.id}
+                    key={notice._id}
                     title={notice.title}
                     content={notice.content}
                     date={notice.date}
@@ -156,7 +122,9 @@ export default function NoticesPage() {
               </div>
             ) : (
               <div className="text-center py-16">
-                <p className="text-muted-foreground text-lg">No notices found matching your criteria.</p>
+                <p className="text-muted-foreground text-lg">
+                  No notices found matching your criteria.
+                </p>
               </div>
             )}
           </div>

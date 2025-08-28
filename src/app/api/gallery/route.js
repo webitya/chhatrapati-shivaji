@@ -1,25 +1,26 @@
-import { NextResponse } from "next/server"
 import clientPromise from "@/lib/mongodb"
 
 export async function GET() {
   try {
     const client = await clientPromise
-    const db = client.db("school-website")
-    const images = await db.collection("gallery").find({}).sort({ createdAt: -1 }).toArray()
+    const db = client.db("school") // change to your DB name
+    const images = await db.collection("gallery").find({}).toArray()
 
-    // Return only public fields
-    const publicImages = images.map((image) => ({
-      id: image._id,
-      title: image.title,
-      description: image.description,
-      category: image.category,
-      url: image.url,
-      createdAt: image.createdAt,
+    // Convert MongoDB _id to string
+    const formatted = images.map(img => ({
+      id: img._id.toString(),
+      title: img.title,
+      description: img.description,
+      category: img.category,
+      url: img.url,
     }))
 
-    return NextResponse.json(publicImages)
+    return new Response(JSON.stringify(formatted), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    })
   } catch (error) {
-    console.error("Error fetching gallery images:", error)
-    return NextResponse.json({ error: "Failed to fetch images" }, { status: 500 })
+    console.error("Error fetching gallery:", error)
+    return new Response(JSON.stringify({ error: "Failed to fetch images" }), { status: 500 })
   }
 }

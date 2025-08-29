@@ -1,16 +1,18 @@
-import { NextResponse } from "next/server"
-import { cookies } from "next/headers"
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export async function GET() {
   try {
-    const authCookie = cookies().get("admin-auth")
+    const cookieStore = await cookies(); // ✅ must be awaited
+    const authCookie = cookieStore.get("admin-auth");
 
     if (authCookie && authCookie.value === "authenticated") {
-      return NextResponse.json({ authenticated: true })
-    } else {
-      return NextResponse.json({ authenticated: false }, { status: 401 })
+      return NextResponse.json({ authenticated: true });
     }
-  } catch (error) {
-    return NextResponse.json({ authenticated: false }, { status: 500 })
+
+    return NextResponse.json({ authenticated: false });
+  } catch (err) {
+    console.error("Verify API Error:", err);
+    return NextResponse.json({ error: "Verification failed" }, { status: 500 });
   }
 }

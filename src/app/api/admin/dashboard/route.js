@@ -1,57 +1,41 @@
-import { NextResponse } from "next/server"
-import { cookies } from "next/headers"
 import clientPromise from "@/lib/mongodb"
-
-async function verifyAdmin() {
-  try {
-    const cookieStore = cookies()
-    const authCookie = cookieStore.get("admin-auth")
-    return authCookie && authCookie.value === "authenticated"
-  } catch (error) {
-    // During build time, cookies might not be available
-    return false
-  }
-}
+import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
-    if (process.env.NODE_ENV === "production" && !process.env.MONGODB_URI) {
-      return NextResponse.json({ error: "Database not configured" }, { status: 500 })
-    }
-
-    if (!verifyAdmin()) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     const client = await clientPromise
     const db = client.db("school-website")
 
-    // Get stats
-    const [noticesCount, imagesCount, messagesCount] = await Promise.all([
-      db.collection("notices").countDocuments(),
-      db.collection("gallery").countDocuments(),
-      db.collection("messages").countDocuments(),
-    ])
+    // ✅ Count stats from collections
+    const totalNotices = await db.collection("notices").countDocuments()
+    const totalImages = await db.collection("gallery").countDocuments()   // <-- ensure collection name is correct
+    const totalMessages = await db.collection("contacts").countDocuments()
+    const totalUsers = await db.collection("users").countDocuments()
 
-    // Get recent activity (sample data)
-    const recentActivity = [
-      { action: "New notice created: Winter Break Schedule", timestamp: "2 hours ago" },
-      { action: "Gallery image uploaded: Science Fair", timestamp: "4 hours ago" },
-      { action: "New message received from parent", timestamp: "6 hours ago" },
-      { action: "Notice updated: Parent-Teacher Conference", timestamp: "1 day ago" },
-    ]
+    // ✅ Example recent activity (last 5 notices/messages)
+    const recentActivity = await db
+      .collection("notices")
+      .find({})
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .toArray()
+
+    const formattedActivity = recentActivity.map((item) => ({
+      action: `Notice added: ${item.title}`,
+      timestamp: new Date(item.createdAt).toLocaleString(),
+    }))
 
     return NextResponse.json({
       stats: {
-        totalNotices: noticesCount,
-        totalImages: imagesCount,
-        totalMessages: messagesCount,
-        totalUsers: 1, // Simple admin system
+        totalNotices,
+        totalImages,
+        totalMessages,
+        totalUsers,
       },
-      recentActivity,
+      recentActivity: formattedActivity,
     })
   } catch (error) {
-    console.error("Dashboard API error:", error)
-    return NextResponse.json({ error: "Failed to fetch dashboard data" }, { status: 500 })
+    console.error("❌ Dashboard API Error:", error)
+    return NextResponse.json({ error: "Failed to load dashboard data" }, { status: 500 })
   }
 }

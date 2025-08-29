@@ -46,8 +46,8 @@ export default function AdminLayout({ children }) {
     { name: "Notices", href: "/admin/notices", icon: FileText },
     { name: "Gallery", href: "/admin/gallery", icon: ImageIcon },
     { name: "Messages", href: "/admin/messages", icon: Mail },
-    { name: "Users", href: "/admin/users", icon: Users },
-    { name: "Settings", href: "/admin/settings", icon: Settings },
+    // { name: "Users", href: "/admin/users", icon: Users },
+    // { name: "Settings", href: "/admin/settings", icon: Settings },
   ]
 
   if (isLoading) {

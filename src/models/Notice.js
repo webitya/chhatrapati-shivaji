@@ -19,5 +19,5 @@ const NoticeSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-// Avoid model overwrite error in Next.js
+//    Avoid model 
 export default mongoose.models.Notice || mongoose.model("Notice", NoticeSchema)

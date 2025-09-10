@@ -1,12 +1,15 @@
 "use client"
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Menu, School } from "lucide-react"
+import MenuIcon from "@mui/icons-material/Menu"   // ✅ MUI Hamburger
+import { usePathname } from "next/navigation"
 import NavbarDrawer from "./navbar-drawer"
 
 export default function Navbar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const pathname = usePathname()
 
   const navItems = [
     { name: "Home", href: "/" },
@@ -19,42 +22,74 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-white/95 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
+      <nav className="bg-blue-900/95 backdrop-blur-sm border-b border-blue-800 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2">
-              <School className="h-8 w-8 text-blue-600" />
-              <span className="font-serif font-bold text-xl text-gray-900">Chhatrapati Shivaji +2 High School</span>
+            
+            {/* Logo + School Name */}
+            <Link href="/" className="flex items-center space-x-3">
+              <Image
+                src="/logo.png"
+                alt="Chhatrapati Shivaji +2 High School"
+                width={48}
+                height={48}
+                className="rounded-full border border-white"
+              />
+              <span className="font-serif font-bold leading-tight text-white">
+                <span className="block sm:inline">Chhatrapati Shivaji</span>
+                <span className="block sm:inline sm:ml-2">+2 High School</span>
+              </span>
             </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-gray-900 hover:text-blue-600 transition-colors duration-200 font-medium"
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {navItems.map((item) => {
+                const isActive = pathname === item.href
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`transition-colors duration-200 font-medium ${
+                      isActive
+                        ? "text-yellow-300 border-b-2 border-yellow-400 pb-1"
+                        : "text-white hover:text-yellow-300"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                )
+              })}
               <Link href="/contact">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">
+                <Button
+                  className={`px-6 py-2 rounded-lg font-medium transition-colors duration-200 ${
+                    pathname === "/contact"
+                      ? "bg-yellow-500 text-blue-900"
+                      : "bg-yellow-400 hover:bg-yellow-500 text-blue-900"
+                  }`}
+                >
                   Contact Us
                 </Button>
               </Link>
             </div>
 
-            <div className="md:hidden">
-              <Button variant="ghost" size="sm" onClick={() => setIsDrawerOpen(true)} className="text-gray-900">
-                <Menu className="h-6 w-6" />
-              </Button>
-            </div>
+            {/* Mobile Menu Button */}
+       {/* Mobile Menu Button */}
+<div className="md:hidden flex items-center">
+  <Button
+    variant="ghost"
+    size="icon"
+    onClick={() => setIsDrawerOpen(true)}
+    className="flex items-center justify-center w-12 h-12 bg-white/10 hover:bg-white/20 rounded-lg text-white"
+  >
+    <MenuIcon sx={{ fontSize: 36 }} /> {/* ✅ Square + Centered */}
+  </Button>
+</div>
+
           </div>
         </div>
       </nav>
 
+      {/* Drawer */}
       <NavbarDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
     </>
   )

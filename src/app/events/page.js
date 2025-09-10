@@ -2,18 +2,15 @@
 
 import { useState, useEffect } from "react"
 import MainLayout from "@/components/layout/main-layout"
-import ContentSection from "@/components/ui/content-section"
-import SectionHeader from "@/components/ui/section-header"
-import EventCard from "@/components/ui/event-card"
-import LoadingSpinner from "@/components/ui/loading-spinner"
 import { Button } from "@/components/ui/button"
 
 export default function EventsPage() {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [filterCategory, setFilterCategory] = useState("all")
+  const categories = ["all", "academic", "arts", "sports", "community"]
 
-  // Sample events data - in real app, this would come from API
+  // Sample events data
   useEffect(() => {
     const sampleEvents = [
       {
@@ -89,88 +86,80 @@ export default function EventsPage() {
     }, 1000)
   }, [])
 
-  const filteredEvents = events.filter((event) => {
-    return filterCategory === "all" || event.category.toLowerCase() === filterCategory.toLowerCase()
-  })
-
-  const categories = ["all", "academic", "arts", "sports", "community"]
+  const filteredEvents = events.filter(event =>
+    filterCategory === "all" || event.category.toLowerCase() === filterCategory.toLowerCase()
+  )
 
   return (
     <MainLayout>
       {/* Hero Section */}
-      <ContentSection background="primary" padding="default">
-        <div className="text-center space-y-4">
-          <SectionHeader
-            title="School Events"
-            subtitle="Stay connected with our vibrant school community through exciting events and activities"
-            centered
-          />
-        </div>
-      </ContentSection>
+      <section className="bg-primary text-white py-20 text-center">
+        <h1 className="text-4xl font-bold mb-4">School Events</h1>
+        <p className="text-lg max-w-2xl mx-auto">
+          Stay connected with our vibrant school community through exciting events and activities.
+        </p>
+      </section>
 
-      {/* Filter */}
-      <ContentSection background="muted" padding="sm">
-        <div className="flex justify-center">
-          <div className="flex gap-2 flex-wrap">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={filterCategory === category ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilterCategory(category)}
-                className="capitalize"
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
+      {/* Filter Buttons */}
+      <section className="bg-gray-100 py-6">
+        <div className="flex justify-center flex-wrap gap-3">
+          {categories.map(category => (
+            <button
+              key={category}
+              onClick={() => setFilterCategory(category)}
+              className={`px-4 py-2 rounded-full font-medium transition ${
+                filterCategory === category
+                  ? "bg-primary text-white"
+                  : "bg-white text-gray-700 border border-gray-300 hover:bg-primary hover:text-white"
+              }`}
+            >
+              {category.charAt(0).toUpperCase() + category.slice(1)}
+            </button>
+          ))}
         </div>
-      </ContentSection>
+      </section>
 
       {/* Events List */}
-      <ContentSection padding="lg">
+      <section className="py-16 px-4 max-w-7xl mx-auto">
         {loading ? (
-          <div className="flex justify-center items-center py-16">
-            <LoadingSpinner size="lg" />
+          <div className="text-center py-16 text-gray-500">Loading events...</div>
+        ) : filteredEvents.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredEvents.map(event => (
+              <div key={event.id} className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden">
+                {event.image && (
+                  <img src={event.image} alt={event.title} className="w-full h-48 object-cover" />
+                )}
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
+                  <p className="text-gray-600 mb-4">{event.description}</p>
+                  <div className="flex flex-wrap gap-2 text-sm text-gray-500">
+                    <span>Date: {event.date}</span>
+                    <span>Time: {event.time}</span>
+                    <span>Location: {event.location}</span>
+                    <span>Category: {event.category}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
-          <div className="space-y-8">
-            {filteredEvents.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredEvents.map((event) => (
-                  <EventCard
-                    key={event.id}
-                    title={event.title}
-                    description={event.description}
-                    date={event.date}
-                    time={event.time}
-                    location={event.location}
-                    category={event.category}
-                    image={event.image}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-16">
-                <p className="text-muted-foreground text-lg">No events found in this category.</p>
-              </div>
-            )}
+          <div className="text-center py-16 text-gray-500">
+            No events found in this category.
           </div>
         )}
-      </ContentSection>
+      </section>
 
       {/* Call to Action */}
-      <ContentSection background="secondary" padding="default">
-        <div className="text-center space-y-6">
-          <h2 className="font-serif font-bold text-2xl text-white">Do not Miss Out!</h2>
-          <p className="text-white/90 max-w-2xl mx-auto">
-            Subscribe to our newsletter to receive updates about upcoming events and important school announcements.
-          </p>
-          <Button size="lg" className="bg-white text-secondary hover:bg-white/90 px-8 py-3 text-lg font-semibold">
-            Subscribe to Updates
-          </Button>
-        </div>
-      </ContentSection>
+      <section className="bg-secondary py-20 text-center text-white">
+        <h2 className="text-2xl font-bold mb-4">Do not Miss Out!</h2>
+        <p className="max-w-2xl mx-auto mb-6">
+          Subscribe to our newsletter to receive updates about upcoming events and important school announcements.
+        </p>
+        <button className="px-8 py-3 text-lg font-semibold bg-white text-secondary rounded hover:bg-white/90 transition">
+          Subscribe to Updates
+        </button>
+      </section>
     </MainLayout>
   )
 }

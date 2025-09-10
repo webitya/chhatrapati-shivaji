@@ -23,7 +23,7 @@ export default function Navbar() {
   return (
     <>
       <nav className="bg-blue-900/95 backdrop-blur-sm border-b border-blue-800 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             
             {/* Logo + School Name */}
@@ -31,8 +31,8 @@ export default function Navbar() {
               <Image
                 src="/logo.png"
                 alt="Chhatrapati Shivaji +2 High School"
-                width={48}
-                height={48}
+                width={54}
+                height={54}
                 className="rounded-full border border-white"
               />
               <span className="font-serif font-bold leading-tight text-white">

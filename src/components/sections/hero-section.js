@@ -985,31 +985,7 @@ export default function EnhancedCampusHero() {
       </motion.div>
 
       {/* Enhanced Campus Stats Overlay */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.4 }}
-        className="absolute bottom-2 lg:bottom-8 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-lg p-2 lg:p-4 shadow-lg border border-white/30 w-[90%] sm:w-auto"
-      >
-        <div className="flex justify-between sm:space-x-6 lg:space-x-8 text-center">
-          <div className="flex-1">
-            <div className="text-sm sm:text-lg lg:text-2xl font-bold text-yellow-600">2500+</div>
-            <div className="text-xs lg:text-sm text-gray-600">Students</div>
-          </div>
-          <div className="flex-1">
-            <div className="text-sm sm:text-lg lg:text-2xl font-bold text-green-600">180+</div>
-            <div className="text-xs lg:text-sm text-gray-600">Faculty</div>
-          </div>
-          <div className="flex-1">
-            <div className="text-sm sm:text-lg lg:text-2xl font-bold text-blue-600">30</div>
-            <div className="text-xs lg:text-sm text-gray-600">Acres Campus</div>
-          </div>
-          <div className="flex-1">
-            <div className="text-sm sm:text-lg lg:text-2xl font-bold text-purple-600">98%</div>
-            <div className="text-xs lg:text-sm text-gray-600">Success Rate</div>
-          </div>
-        </div>
-      </motion.div>
+
     </section>
   )
 }

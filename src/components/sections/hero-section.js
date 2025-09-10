@@ -120,7 +120,7 @@ function Scene3D() {
 export default function HeroSection() {
   return (
     <section
-      className="relative h-[90vh] w-full flex flex-col md:flex-row items-center justify-center px-6 md:px-12 bg-cover bg-center overflow-hidden"
+      className="relative py-4 h-[90vh] w-full flex flex-col md:flex-row items-center justify-center px-6 md:px-12 bg-cover bg-center overflow-hidden"
       style={{ backgroundImage: "url('/modern-school-students.png')" }}
     >
       {/* Overlay */}

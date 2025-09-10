@@ -5,159 +5,178 @@ import { Canvas } from "@react-three/fiber"
 import { OrbitControls, Environment, Float } from "@react-three/drei"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { motion } from "framer-motion"
 
+// --- 3D Elements --- //
 function SchoolBuilding3D() {
   return (
-    <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
-      <group position={[0, -1, 0]}>
-        {/* Main Building */}
-        <mesh position={[0, 1, 0]}>
-          <boxGeometry args={[3, 2, 1.5]} />
-          <meshStandardMaterial color="#f59e0b" />
+    <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.3}>
+      <group position={[0, -1, 0]} scale={[1, 1, 1]}>
+        {/* Ground Floor */}
+        <mesh position={[0, 0.6, 0]}>
+          <boxGeometry args={[3, 1.2, 1.5]} />
+          <meshStandardMaterial color="#fbbf24" />
         </mesh>
-
+        {/* First Floor */}
+        <mesh position={[0, 2, 0]}>
+          <boxGeometry args={[3, 1.2, 1.5]} />
+          <meshStandardMaterial color="#fde68a" />
+        </mesh>
         {/* Roof */}
-        <mesh position={[0, 2.2, 0]} rotation={[0, 0, 0]}>
-          <coneGeometry args={[2, 0.8, 4]} />
+        <mesh position={[0, 3.2, 0]}>
+          <coneGeometry args={[2.5, 1, 4]} />
           <meshStandardMaterial color="#dc2626" />
         </mesh>
-
-        {/* Windows */}
-        <mesh position={[-0.8, 1.2, 0.76]}>
-          <boxGeometry args={[0.4, 0.4, 0.02]} />
-          <meshStandardMaterial color="#3b82f6" />
-        </mesh>
-        <mesh position={[0, 1.2, 0.76]}>
-          <boxGeometry args={[0.4, 0.4, 0.02]} />
-          <meshStandardMaterial color="#3b82f6" />
-        </mesh>
-        <mesh position={[0.8, 1.2, 0.76]}>
-          <boxGeometry args={[0.4, 0.4, 0.02]} />
-          <meshStandardMaterial color="#3b82f6" />
-        </mesh>
-
         {/* Door */}
-        <mesh position={[0, 0.4, 0.76]}>
-          <boxGeometry args={[0.6, 0.8, 0.02]} />
-          <meshStandardMaterial color="#4b5563" />
+        <mesh position={[0, 0.2, 0.76]}>
+          <boxGeometry args={[0.6, 0.8, 0.05]} />
+          <meshStandardMaterial color="#1f2937" />
         </mesh>
-
+        {/* Windows */}
+        {[-1, 0, 1].map((x) => (
+          <mesh key={`g-${x}`} position={[x, 1.2, 0.76]}>
+            <boxGeometry args={[0.4, 0.4, 0.05]} />
+            <meshStandardMaterial color="#3b82f6" />
+          </mesh>
+        ))}
+        {[-1, 0, 1].map((x) => (
+          <mesh key={`f-${x}`} position={[x, 2.6, 0.76]}>
+            <boxGeometry args={[0.4, 0.4, 0.05]} />
+            <meshStandardMaterial color="#3b82f6" />
+          </mesh>
+        ))}
         {/* Flag Pole */}
-        <mesh position={[2, 1.5, 0]}>
-          <cylinderGeometry args={[0.02, 0.02, 3]} />
-          <meshStandardMaterial color="#4b5563" />
+        <mesh position={[0, 4.2, 0]}>
+          <cylinderGeometry args={[0.05, 0.05, 1]} />
+          <meshStandardMaterial color="#374151" />
         </mesh>
-
-        {/* Flag */}
-        <mesh position={[2.3, 2.5, 0]}>
-          <boxGeometry args={[0.6, 0.4, 0.01]} />
-          <meshStandardMaterial color="#dc2626" />
+        <mesh position={[0.4, 4.6, 0]}>
+          <boxGeometry args={[0.8, 0.4, 0.05]} />
+          <meshStandardMaterial color="#16a34a" />
         </mesh>
       </group>
     </Float>
   )
 }
 
-function FloatingBooks() {
+function Trees() {
   return (
     <>
-      <Float speed={2} rotationIntensity={0.3} floatIntensity={0.8} position={[-3, 1, -2]}>
-        <mesh>
-          <boxGeometry args={[0.3, 0.4, 0.05]} />
+      {[-4, -2, 4, 6].map((x, i) => (
+        <group key={i} position={[x, -1, -2]}>
+          <mesh>
+            <cylinderGeometry args={[0.1, 0.1, 1]} />
+            <meshStandardMaterial color="#8b5a2b" />
+          </mesh>
+          <mesh position={[0, 1, 0]}>
+            <sphereGeometry args={[0.8, 16, 16]} />
+            <meshStandardMaterial color="#228b22" />
+          </mesh>
+        </group>
+      ))}
+    </>
+  )
+}
+
+function SchoolBus() {
+  return (
+    <group position={[3, -0.5, 2]} scale={[1, 1, 1]}>
+      <mesh>
+        <boxGeometry args={[3, 1, 1]} />
+        <meshStandardMaterial color="#facc15" />
+      </mesh>
+      {[-1, 1].map((x) =>
+        [-0.4, 0.4].map((z, i) => (
+          <mesh key={`${x}-${i}`} position={[x, -0.6, z]}>
+            <cylinderGeometry args={[0.3, 0.3, 0.2, 32]} />
+            <meshStandardMaterial color="black" />
+          </mesh>
+        ))
+      )}
+      {[ -1, 0, 1 ].map((x, i) => (
+        <mesh key={i} position={[x, 0.2, 0.52]}>
+          <boxGeometry args={[0.8, 0.5, 0.05]} />
           <meshStandardMaterial color="#3b82f6" />
         </mesh>
-      </Float>
-      <Float speed={1.8} rotationIntensity={0.4} floatIntensity={0.6} position={[3, 2, -1]}>
-        <mesh>
-          <boxGeometry args={[0.3, 0.4, 0.05]} />
-          <meshStandardMaterial color="#f59e0b" />
-        </mesh>
-      </Float>
-      <Float speed={2.2} rotationIntensity={0.2} floatIntensity={0.7} position={[-2, -1, 1]}>
-        <mesh>
-          <boxGeometry args={[0.3, 0.4, 0.05]} />
-          <meshStandardMaterial color="#dc2626" />
-        </mesh>
-      </Float>
-    </>
+      ))}
+    </group>
   )
 }
 
 function Scene3D() {
   return (
     <>
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[10, 10, 5]} intensity={1} />
+      <ambientLight intensity={0.8} />
+      <directionalLight position={[10, 10, 5]} intensity={1.2} />
       <SchoolBuilding3D />
-      <FloatingBooks />
+      <Trees />
+      <SchoolBus />
       <Environment preset="sunset" />
     </>
   )
 }
 
+// --- Hero Section --- //
 export default function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 overflow-hidden">
-      {/* 3D Background */}
-      <div className="absolute inset-0 z-0">
-        <Canvas camera={{ position: [0, 0, 8], fov: 45 }}>
+    <section
+      className="relative h-[90vh] w-full flex flex-col md:flex-row items-center justify-center px-6 md:px-12 bg-cover bg-center overflow-hidden"
+      style={{ backgroundImage: "url('/modern-school-students.png')" }}
+    >
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-0"></div>
+
+      {/* Left Text (40%) */}
+      <motion.div
+        initial={{ opacity: 0, x: -30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8 }}
+        className="relative z-10 flex flex-col justify-center items-start text-left w-full md:basis-2/5 md:pr-8"
+      >
+        <span className="block text-yellow-400 text-sm md:text-base mb-2 uppercase tracking-widest">
+          Excellence in Education Since 1985
+        </span>
+
+        <h1 className="font-serif font-extrabold text-3xl sm:text-5xl text-white leading-tight">
+          Chhatrapati Shivaji High School
+        </h1>
+
+        <p className="text-sm sm:text-base text-gray-200 mt-3">
+          Nurturing young minds through innovative education, character
+          development, and holistic growth in a supportive learning environment.
+        </p>
+
+        <div className="flex gap-3 mt-5">
+          <Link href="/admission">
+            <Button className="bg-yellow-400 hover:bg-yellow-500 text-blue-900 px-5 py-2 text-sm font-bold rounded-md shadow-md">
+              Apply Now
+            </Button>
+          </Link>
+          <Link href="/about">
+            <Button
+              variant="outline"
+              className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-blue-900 px-5 py-2 text-sm font-bold rounded-md shadow-md"
+            >
+              Learn More
+            </Button>
+          </Link>
+        </div>
+      </motion.div>
+
+      {/* Right 3D (60%) */}
+      <motion.div
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8 }}
+        className="relative z-10 flex items-center justify-center w-full md:basis-3/5 h-[50vh] md:h-[70vh] mt-6 md:mt-0"
+      >
+        <Canvas camera={{ position: [0, 2, 10], fov: 50 }} className="w-full h-full">
           <Suspense fallback={null}>
             <Scene3D />
-            <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
+            <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
           </Suspense>
         </Canvas>
-      </div>
-
-      {/* Content Overlay */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-2xl">
-          <div className="space-y-8">
-            <div className="inline-block px-4 py-2 bg-primary/10 rounded-full">
-              <span className="text-primary font-medium text-sm">Excellence in Education Since 1985</span>
-            </div>
-
-            <h1 className="font-serif font-black text-4xl md:text-6xl lg:text-7xl text-foreground leading-tight">
-              Building
-              <span className="text-primary"> Bright </span>
-              Futures
-            </h1>
-
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Nurturing young minds through innovative education, character development, and holistic growth in a
-              supportive learning environment.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href="/admission">
-                <Button
-                  size="lg"
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg font-semibold"
-                >
-                  Apply for Admission
-                </Button>
-              </Link>
-              <Link href="/about">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground px-8 py-3 text-lg font-semibold bg-transparent"
-                >
-                  Learn More
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="animate-bounce">
-          <div className="w-6 h-10 border-2 border-primary rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-primary rounded-full mt-2 animate-pulse"></div>
-          </div>
-        </div>
-      </div>
+      </motion.div>
     </section>
   )
 }

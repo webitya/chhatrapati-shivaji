@@ -665,7 +665,7 @@ function Enhanced3DCampusScene() {
       <directionalLight position={[-15, 15, -10]} intensity={0.6} />
       <pointLight position={[0, 10, 0]} intensity={0.5} color="#fbbf24" />
 
-      <fog attach="fog" args={["#f8fafc", 15, 50]} />
+      {/* <fog attach="fog" args={["#f8fafc", 15, 50]} /> */}
       <color attach="background" args={["#ffffff"]} />
 
       {/* Campus Ground with realistic texture */}

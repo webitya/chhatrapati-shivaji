@@ -889,7 +889,7 @@ function CameraControlButtons() {
 
 export default function EnhancedCampusHero() {
   return (
-    <section className="relative w-full min-h-[90vh] max-h-[90vh] flex flex-col lg:flex-row items-center justify-center px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-green-50 overflow-hidden">
+    <section className="relative w-full py-5 min-h-[90vh] max-h-[90vh] flex flex-col lg:flex-row items-center justify-center px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-green-50 overflow-hidden">
       {/* Left Text Content */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}
@@ -976,7 +976,7 @@ export default function EnhancedCampusHero() {
         <CameraControlButtons />
 
         <div
-          className="absolute bottom-2 left-2 lg:bottom-4 lg:left-4 text-gray-900 text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-2 rounded-lg shadow-lg border border-gray-200"
+          className="absolute bottom-7 left-2 lg:bottom-4 lg:left-4 text-gray-900 text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-2 rounded-lg shadow-lg border border-gray-200"
           style={{ backgroundColor: "rgba(255, 255, 255, 0.95)" }}
         >
           <div className="lg:hidden">Tap & drag to explore</div>

@@ -1,8 +1,8 @@
 "use client"
 
-import { Suspense } from "react"
+import { Suspense, useRef } from "react"
 import { Canvas } from "@react-three/fiber"
-import { OrbitControls, Environment, Float, Text } from "@react-three/drei"
+import { OrbitControls, Float, Text } from "@react-three/drei"
 import Link from "next/link"
 import { motion } from "framer-motion"
 
@@ -665,6 +665,9 @@ function Enhanced3DCampusScene() {
       <directionalLight position={[-15, 15, -10]} intensity={0.6} />
       <pointLight position={[0, 10, 0]} intensity={0.5} color="#fbbf24" />
 
+      <fog attach="fog" args={["#f8fafc", 15, 50]} />
+      <color attach="background" args={["#ffffff"]} />
+
       {/* Campus Ground with realistic texture */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]}>
         <planeGeometry args={[60, 60]} />
@@ -755,8 +758,6 @@ function Enhanced3DCampusScene() {
           WELCOME TO CHHATRAPATI SHIVAJI+2 HIGH SCHOOL
         </Text>
       </group>
-
-      <Environment preset="sunset" />
     </>
   )
 }
@@ -780,9 +781,115 @@ function CustomButton({ children, className = "", variant = "default", ...props 
 }
 
 // --- Enhanced Hero Section --- //
+
+function Scene3DControls() {
+  const controlsRef = useRef()
+
+  return (
+    <OrbitControls
+      ref={controlsRef}
+      enableZoom={true}
+      autoRotate
+      autoRotateSpeed={0.3}
+      maxPolarAngle={Math.PI / 2.1}
+      minDistance={12}
+      maxDistance={40}
+      enablePan={true}
+      enableDamping={true}
+      dampingFactor={0.05}
+    />
+  )
+}
+
+function CameraControlButtons() {
+  const handleZoomIn = () => {
+    // Camera zoom will be handled by OrbitControls mouse/touch events
+    console.log("[v0] Zoom in clicked")
+  }
+
+  const handleZoomOut = () => {
+    // Camera zoom will be handled by OrbitControls mouse/touch events
+    console.log("[v0] Zoom out clicked")
+  }
+
+  const handleRotateLeft = () => {
+    // Camera rotation will be handled by OrbitControls mouse/touch events
+    console.log("[v0] Rotate left clicked")
+  }
+
+  const handleRotateRight = () => {
+    // Camera rotation will be handled by OrbitControls mouse/touch events
+    console.log("[v0] Rotate right clicked")
+  }
+
+  const handleReset = () => {
+    // Reset will be handled by OrbitControls
+    console.log("[v0] Reset clicked")
+  }
+
+  return (
+    <div className="absolute top-2 right-2 lg:top-4 lg:right-4 z-10 flex flex-col gap-1 lg:gap-2">
+      <button
+        onClick={handleZoomIn}
+        className="w-8 h-8 lg:w-10 lg:h-10 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg shadow-lg border border-white/30 flex items-center justify-center text-gray-700 hover:text-gray-900 transition-all duration-200 hover:scale-105 active:scale-95"
+        title="Zoom In"
+      >
+        <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+      </button>
+
+      <button
+        onClick={handleZoomOut}
+        className="w-8 h-8 lg:w-10 lg:h-10 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg shadow-lg border border-white/30 flex items-center justify-center text-gray-700 hover:text-gray-900 transition-all duration-200 hover:scale-105 active:scale-95"
+        title="Zoom Out"
+      >
+        <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 12H6" />
+        </svg>
+      </button>
+
+      <button
+        onClick={handleRotateLeft}
+        className="w-8 h-8 lg:w-10 lg:h-10 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg shadow-lg border border-white/30 flex items-center justify-center text-gray-700 hover:text-gray-900 transition-all duration-200 hover:scale-105 active:scale-95"
+        title="Rotate Left"
+      >
+        <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <button
+        onClick={handleRotateRight}
+        className="w-8 h-8 lg:w-10 lg:h-10 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg shadow-lg border border-white/30 flex items-center justify-center text-gray-700 hover:text-gray-900 transition-all duration-200 hover:scale-105 active:scale-95"
+        title="Rotate Right"
+      >
+        <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      <button
+        onClick={handleReset}
+        className="w-8 h-8 lg:w-10 lg:h-10 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg shadow-lg border border-white/30 flex items-center justify-center text-gray-700 hover:text-gray-900 transition-all duration-200 hover:scale-105 active:scale-95"
+        title="Reset View"
+      >
+        <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+          />
+        </svg>
+      </button>
+    </div>
+  )
+}
+
 export default function EnhancedCampusHero() {
   return (
-    <section className="relative w-full py-5 min-h-[90vh] max-h-[90vh] flex flex-col lg:flex-row items-center justify-center px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-green-50 overflow-hidden">
+    <section className="relative w-full min-h-[90vh] max-h-[90vh] flex flex-col lg:flex-row items-center justify-center px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-green-50 overflow-hidden">
       {/* Left Text Content */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}
@@ -846,12 +953,12 @@ export default function EnhancedCampusHero() {
         </div>
       </motion.div>
 
-      {/* Right Enhanced 3D Campus */}
+      {/* Right Enhanced 3D Campus with Controls */}
       <motion.div
         initial={{ opacity: 0, x: 40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="w-full lg:w-3/5 h-[40vh] sm:h-[45vh] lg:h-[70vh] xl:h-[75vh] mt-2 lg:mt-0 flex-shrink-0"
+        className="relative w-full lg:w-3/5 h-[40vh] sm:h-[45vh] lg:h-[70vh] xl:h-[75vh] mt-2 lg:mt-0 flex-shrink-0"
       >
         <Canvas
           camera={{ position: [20, 15, 20], fov: 60 }}
@@ -862,23 +969,47 @@ export default function EnhancedCampusHero() {
         >
           <Suspense fallback={null}>
             <Enhanced3DCampusScene />
-            <OrbitControls
-              enableZoom={true}
-              autoRotate
-              autoRotateSpeed={0.3}
-              maxPolarAngle={Math.PI / 2.1}
-              minDistance={12}
-              maxDistance={40}
-              enablePan={true}
-              enableDamping={true}
-              dampingFactor={0.05}
-            />
+            <Scene3DControls />
           </Suspense>
         </Canvas>
+
+        <CameraControlButtons />
+
+        <div
+          className="absolute bottom-2 left-2 lg:bottom-4 lg:left-4 text-gray-900 text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-2 rounded-lg shadow-lg border border-gray-200"
+          style={{ backgroundColor: "rgba(255, 255, 255, 0.95)" }}
+        >
+          <div className="lg:hidden">Tap & drag to explore</div>
+          <div className="hidden lg:block">Click & drag to explore • Scroll to zoom</div>
+        </div>
       </motion.div>
 
       {/* Enhanced Campus Stats Overlay */}
-
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.4 }}
+        className="absolute bottom-2 lg:bottom-8 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-lg p-2 lg:p-4 shadow-lg border border-white/30 w-[90%] sm:w-auto"
+      >
+        <div className="flex justify-between sm:space-x-6 lg:space-x-8 text-center">
+          <div className="flex-1">
+            <div className="text-sm sm:text-lg lg:text-2xl font-bold text-yellow-600">2500+</div>
+            <div className="text-xs lg:text-sm text-gray-600">Students</div>
+          </div>
+          <div className="flex-1">
+            <div className="text-sm sm:text-lg lg:text-2xl font-bold text-green-600">180+</div>
+            <div className="text-xs lg:text-sm text-gray-600">Faculty</div>
+          </div>
+          <div className="flex-1">
+            <div className="text-sm sm:text-lg lg:text-2xl font-bold text-blue-600">30</div>
+            <div className="text-xs lg:text-sm text-gray-600">Acres Campus</div>
+          </div>
+          <div className="flex-1">
+            <div className="text-sm sm:text-lg lg:text-2xl font-bold text-purple-600">98%</div>
+            <div className="text-xs lg:text-sm text-gray-600">Success Rate</div>
+          </div>
+        </div>
+      </motion.div>
     </section>
   )
 }

@@ -1,6 +1,7 @@
 "use client"
 
-import { FaWhatsapp, FaPhone } from "react-icons/fa"
+import WhatsAppIcon from "@mui/icons-material/WhatsApp"
+import PhoneIcon from "@mui/icons-material/Phone"
 
 export default function FloatingContactButtons() {
   const phoneNumber = "+918651286714"
@@ -11,31 +12,30 @@ export default function FloatingContactButtons() {
   }
 
   const handleWhatsApp = () => {
-    const message = encodeURIComponent("Hello! I would like to know more about Chhatrapati Shivaji +2 High School.")
+    const message = encodeURIComponent(
+      "Hello! I would like to know more about Chhatrapati Shivaji +2 High School."
+    )
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank")
   }
 
   return (
-    <div
-      className="fixed bottom-4 right-4 z-[99999] flex flex-col gap-2"
-      style={{ position: "fixed", bottom: "16px", right: "16px", zIndex: 99999 }}
-    >
+    <div className="fixed bottom-4 right-4 z-[99999] flex flex-col gap-2">
       {/* WhatsApp Button */}
       <button
         onClick={handleWhatsApp}
-        className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
-        title="Chat on WhatsApp"
+        className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-full shadow-md text-sm transition-all duration-300 hover:scale-105"
       >
-        <FaWhatsapp className="w-4 h-4" />
+        <WhatsAppIcon fontSize="small" />
+        <span>WhatsApp</span>
       </button>
 
       {/* Call Button */}
       <button
         onClick={handleCall}
-        className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
-        title="Call Us"
+        className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-full shadow-md text-sm transition-all duration-300 hover:scale-105"
       >
-        <FaPhone className="w-4 h-4" />
+        <PhoneIcon fontSize="small" />
+        <span>Call Now</span>
       </button>
     </div>
   )

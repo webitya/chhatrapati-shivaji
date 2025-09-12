@@ -106,7 +106,10 @@ export default function NoticesPage() {
                   <p className="text-gray-600 text-sm mb-4">{notice.content}</p>
                 </div>
                 <div className="flex justify-between items-center text-sm text-gray-500 mt-4 pt-4 border-t">
-                  <span>{new Date(notice.date).toLocaleDateString()}</span>
+                  {/* ✅ Fixed date rendering */}
+                  <span>
+                    {new Date(notice.date || notice.createdAt).toLocaleDateString()}
+                  </span>
                   <span className="capitalize">{notice.category}</span>
                 </div>
               </div>

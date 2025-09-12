@@ -3,8 +3,8 @@ import Image from "next/image"
 import { Groups, TrackChanges, Favorite, EmojiEvents, MenuBook, Public } from "@mui/icons-material"
 
 export const metadata = {
-  title: "About Us - Bright Future School",
-  description: "Learn about our mission, vision, and commitment to educational excellence at Bright Future School.",
+  title: "About Us - Chhatrapati Shivaji+2 High School",
+  description: "Learn about our mission, vision, and commitment to educational excellence at Chhatrapati Shivaji+2 High School.",
 }
 
 export default function AboutPage() {
@@ -45,13 +45,13 @@ export default function AboutPage() {
     <MainLayout>
       {/* Hero Section */}
       <section className="bg-blue-700 text-white py-16 px-6 text-center">
-        <h1 className="text-4xl font-bold mb-4">About Bright Future School</h1>
+        <h1 className="text-4xl font-bold mb-4">About Chhatrapati Shivaji+2 High School</h1>
         <p className="text-lg max-w-3xl mx-auto">
           Nurturing minds, building character, creating tomorrow s leaders
         </p>
         <div className="mt-8 max-w-4xl mx-auto">
           <p className="text-base leading-relaxed text-white/90">
-            For nearly four decades, Bright Future School has been a beacon of educational
+            For nearly four decades, Chhatrapati Shivaji+2 High School has been a beacon of educational
             excellence, committed to developing well-rounded individuals who are prepared to make
             meaningful contributions to society.
           </p>
@@ -156,7 +156,7 @@ export default function AboutPage() {
             <div className="border-l-4 border-blue-600 pl-6">
               <h3 className="font-semibold text-lg mb-1">1985 - Foundation</h3>
               <p className="text-gray-600 text-sm">
-                Bright Future School was founded with a vision to provide quality education that
+                Chhatrapati Shivaji+2 High School was founded with a vision to provide quality education that
                 nurtures both academic excellence and character development.
               </p>
             </div>

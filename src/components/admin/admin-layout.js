@@ -5,6 +5,8 @@ import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { School, LayoutDashboard, FileText, ImageIcon, Mail, Users, Settings, LogOut, Menu, X } from "lucide-react"
+import { events } from "@react-three/fiber"
+import { Event } from "@mui/icons-material"
 
 export default function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -46,6 +48,8 @@ export default function AdminLayout({ children }) {
     { name: "Notices", href: "/admin/notices", icon: FileText },
     { name: "Gallery", href: "/admin/gallery", icon: ImageIcon },
     { name: "Messages", href: "/admin/messages", icon: Mail },
+    { name: "Events", href: "/admin/events", icon: Event },
+
     // { name: "Users", href: "/admin/users", icon: Users },
     // { name: "Settings", href: "/admin/settings", icon: Settings },
   ]
@@ -84,7 +88,8 @@ export default function AdminLayout({ children }) {
               <School className="h-8 w-8 text-primary" />
               <div>
                 <h1 className="font-serif font-bold text-lg text-foreground">Admin Panel</h1>
-                <p className="text-xs text-muted-foreground">Bright Future School</p>
+                <p className="text-xs text-muted-foreground">Chhatrapati Shivaji+2
+High School</p>
               </div>
             </div>
             <Button variant="ghost" size="sm" className="lg:hidden" onClick={() => setSidebarOpen(false)}>

@@ -88,7 +88,7 @@ export default function AboutPage() {
 
     {/* Highlight Principal Card */}
     <div className="mt-8 p-6 bg-gray-100 rounded-2xl shadow-md">
-      <h3 className="text-xl font-bold text-green-700">Principal's Message</h3>
+      <h3 className="text-xl font-bold text-green-700">Principal s Message</h3>
       <p className="text-gray-700 mt-2">
         <span className="font-semibold text-green-600">Mr. Sikandar Kumar Yadav</span> leads with a
         vision to shape disciplined, knowledgeable, and value-driven students who are prepared for a

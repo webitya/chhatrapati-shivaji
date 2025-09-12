@@ -1,7 +1,7 @@
 "use client"
 
-import { Suspense, useRef } from "react"
-import { Canvas } from "@react-three/fiber"
+import { Suspense, useRef, useState } from "react"
+import { Canvas, useFrame } from "@react-three/fiber"
 import { OrbitControls, Float, Text } from "@react-three/drei"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -656,8 +656,791 @@ function EnhancedTree({ position = [0, 0, 0], treeType = "oak" }) {
   )
 }
 
-// Main 3D Campus Scene
+function StaticBus({ position = [12, 0, 0] }) {
+  return (
+    <group position={position}>
+      {/* Main bus body */}
+      <mesh position={[0, 0.8, 0]}>
+        <boxGeometry args={[3, 1.6, 1.2]} />
+        <meshStandardMaterial color="#fbbf24" />
+      </mesh>
+      {/* Bus front */}
+      <mesh position={[1.6, 0.8, 0]}>
+        <boxGeometry args={[0.2, 1.4, 1]} />
+        <meshStandardMaterial color="#f59e0b" />
+      </mesh>
+      {/* Windshield */}
+      <mesh position={[1.65, 1.2, 0]}>
+        <boxGeometry args={[0.05, 0.8, 0.8]} />
+        <meshStandardMaterial color="#3b82f6" transparent opacity={0.7} />
+      </mesh>
+      {/* Side windows */}
+      {[-0.8, -0.2, 0.4, 1].map((x, i) => (
+        <mesh key={`bus-window-${i}`} position={[x, 1.2, 0.61]}>
+          <boxGeometry args={[0.4, 0.6, 0.02]} />
+          <meshStandardMaterial color="#3b82f6" transparent opacity={0.7} />
+        </mesh>
+      ))}
+      {/* Static wheels */}
+      {[-0.8, 0.8].map((x, i) => (
+        <group key={`bus-wheel-group-${i}`}>
+          <mesh position={[x, 0.2, 0.7]}>
+            <cylinderGeometry args={[0.3, 0.3, 0.15]} />
+            <meshStandardMaterial color="#1f2937" />
+          </mesh>
+          <mesh position={[x, 0.2, -0.7]}>
+            <cylinderGeometry args={[0.3, 0.3, 0.15]} />
+            <meshStandardMaterial color="#1f2937" />
+          </mesh>
+        </group>
+      ))}
+      {/* Bus door */}
+      <mesh position={[-1.4, 0.6, 0.61]}>
+        <boxGeometry args={[0.6, 1.2, 0.02]} />
+        <meshStandardMaterial color="#dc2626" />
+      </mesh>
+      <Text position={[0, 1.8, 0.65]} fontSize={0.15} color="#1f2937" anchorX="center" anchorY="middle">
+        SCHOOL BUS
+      </Text>
+    </group>
+  )
+}
+
+// Security Gate with guard house
+function SecurityGate({ position = [0, 0, 12] }) {
+  return (
+    <group position={position}>
+      {/* Gate pillars */}
+      {[-2, 2].map((x, i) => (
+        <mesh key={`gate-pillar-${i}`} position={[x, 1.5, 0]}>
+          <boxGeometry args={[0.4, 3, 0.4]} />
+          <meshStandardMaterial color="#6b7280" />
+        </mesh>
+      ))}
+      {/* Gate bars */}
+      <mesh position={[0, 1.5, 0]}>
+        <boxGeometry args={[4, 0.1, 0.1]} />
+        <meshStandardMaterial color="#374151" />
+      </mesh>
+      {/* Guard house */}
+      <mesh position={[3.5, 1, 0]}>
+        <boxGeometry args={[1.5, 2, 1.5]} />
+        <meshStandardMaterial color="#f59e0b" />
+      </mesh>
+      <mesh position={[3.5, 1, 0.76]}>
+        <boxGeometry args={[0.6, 0.8, 0.02]} />
+        <meshStandardMaterial color="#3b82f6" transparent opacity={0.7} />
+      </mesh>
+      <Text position={[0, 2.8, 0.2]} fontSize={0.2} color="#1f2937" anchorX="center" anchorY="middle">
+        MAIN ENTRANCE
+      </Text>
+    </group>
+  )
+}
+
+// Water Tank Tower
+function WaterTank({ position = [15, 0, -8] }) {
+  return (
+    <group position={position}>
+      {/* Tower structure */}
+      {[
+        [-1, -1],
+        [1, -1],
+        [-1, 1],
+        [1, 1],
+      ].map(([x, z], i) => (
+        <mesh key={`tower-leg-${i}`} position={[x, 4, z]}>
+          <cylinderGeometry args={[0.1, 0.1, 8]} />
+          <meshStandardMaterial color="#6b7280" />
+        </mesh>
+      ))}
+      {/* Water tank */}
+      <mesh position={[0, 8, 0]}>
+        <cylinderGeometry args={[2, 2, 3]} />
+        <meshStandardMaterial color="#06b6d4" />
+      </mesh>
+      {/* Tank support */}
+      <mesh position={[0, 6.5, 0]}>
+        <cylinderGeometry args={[2.2, 2.2, 0.5]} />
+        <meshStandardMaterial color="#374151" />
+      </mesh>
+    </group>
+  )
+}
+
+// Solar Panel Array
+function SolarPanels({ position = [-15, 0, 8] }) {
+  return (
+    <group position={position}>
+      {/* Solar panel grid */}
+      {[-2, -1, 0, 1, 2].map((x, i) =>
+        [-1, 0, 1].map((z, j) => (
+          <mesh key={`solar-${i}-${j}`} position={[x * 1.5, 0.5, z * 2]} rotation={[-Math.PI / 6, 0, 0]}>
+            <boxGeometry args={[1.2, 0.05, 1.8]} />
+            <meshStandardMaterial color="#1e40af" />
+          </mesh>
+        )),
+      )}
+      {/* Support structure */}
+      {[-3, -1.5, 0, 1.5, 3].map((x, i) =>
+        [-2, 0, 2].map((z, j) => (
+          <mesh key={`support-${i}-${j}`} position={[x, 0.3, z]} rotation={[0, 0, Math.PI / 12]}>
+            <cylinderGeometry args={[0.05, 0.05, 0.8]} />
+            <meshStandardMaterial color="#6b7280" />
+          </mesh>
+        )),
+      )}
+    </group>
+  )
+}
+
+// Weather Station
+function WeatherStation({ position = [-8, 0, -12] }) {
+  return (
+    <group position={position}>
+      {/* Base platform */}
+      <mesh position={[0, 0.1, 0]}>
+        <cylinderGeometry args={[1.5, 1.5, 0.2]} />
+        <meshStandardMaterial color="#94a3b8" />
+      </mesh>
+      {/* Weather instruments */}
+      <mesh position={[0, 2, 0]}>
+        <cylinderGeometry args={[0.1, 0.1, 4]} />
+        <meshStandardMaterial color="#6b7280" />
+      </mesh>
+      {/* Anemometer */}
+      <mesh position={[0, 4.2, 0]}>
+        <sphereGeometry args={[0.2, 8, 8]} />
+        <meshStandardMaterial color="#ef4444" />
+      </mesh>
+      {/* Wind vane */}
+      <mesh position={[0.8, 3.5, 0]} rotation={[0, 0, Math.PI / 4]}>
+        <boxGeometry args={[0.6, 0.02, 0.1]} />
+        <meshStandardMaterial color="#fbbf24" />
+      </mesh>
+    </group>
+  )
+}
+
+// Enhanced Campus Pathways
+function CampusPathways() {
+  return (
+    <group>
+      {/* Main pathway from entrance */}
+      <mesh position={[0, 0.01, 6]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[2, 12]} />
+        <meshStandardMaterial color="#94a3b8" />
+      </mesh>
+      {/* Cross pathways */}
+      <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, Math.PI / 2]}>
+        <planeGeometry args={[1.5, 24]} />
+        <meshStandardMaterial color="#94a3b8" />
+      </mesh>
+      {/* Pathway to parking */}
+      <mesh position={[-6, 0.01, 4]} rotation={[-Math.PI / 2, 0, Math.PI / 4]}>
+        <planeGeometry args={[1, 8]} />
+        <meshStandardMaterial color="#94a3b8" />
+      </mesh>
+    </group>
+  )
+}
+
+function AnimatedStudent({ position = [0, 0, 0], color = "#3b82f6", walkPath = [] }) {
+  const studentRef = useRef()
+  const [currentTarget, setCurrentTarget] = useState(0)
+
+  useFrame((state) => {
+    if (studentRef.current && walkPath.length > 0) {
+      const target = walkPath[currentTarget]
+      const current = studentRef.current.position
+
+      // Move towards target
+      const speed = 0.02
+      const dx = target[0] - current.x
+      const dz = target[2] - current.z
+      const distance = Math.sqrt(dx * dx + dz * dz)
+
+      if (distance > 0.5) {
+        current.x += (dx / distance) * speed
+        current.z += (dz / distance) * speed
+
+        // Rotate to face movement direction
+        studentRef.current.rotation.y = Math.atan2(dx, dz)
+      } else {
+        // Move to next target
+        setCurrentTarget((prev) => (prev + 1) % walkPath.length)
+      }
+
+      // Add walking animation
+      const walkCycle = Math.sin(state.clock.elapsedTime * 8) * 0.1
+      current.y = position[1] + Math.abs(walkCycle)
+    }
+  })
+
+  return (
+    <group ref={studentRef} position={position}>
+      {/* Student body */}
+      <mesh position={[0, 0.8, 0]}>
+        <capsuleGeometry args={[0.15, 0.6]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+      {/* Student head */}
+      <mesh position={[0, 1.3, 0]}>
+        <sphereGeometry args={[0.12]} />
+        <meshStandardMaterial color="#fdbcb4" />
+      </mesh>
+      {/* Backpack */}
+      <mesh position={[0, 0.9, -0.12]}>
+        <boxGeometry args={[0.2, 0.3, 0.1]} />
+        <meshStandardMaterial color="#dc2626" />
+      </mesh>
+      {/* Arms */}
+      <mesh position={[-0.12, 0.7, 0]}>
+        <capsuleGeometry args={[0.04, 0.3]} />
+        <meshStandardMaterial color="#fdbcb4" />
+      </mesh>
+      <mesh position={[0.12, 0.7, 0]}>
+        <capsuleGeometry args={[0.04, 0.3]} />
+        <meshStandardMaterial color="#fdbcb4" />
+      </mesh>
+      {/* Legs */}
+      <mesh position={[-0.08, 0.3, 0]}>
+        <capsuleGeometry args={[0.05, 0.4]} />
+        <meshStandardMaterial color="#1f2937" />
+      </mesh>
+      <mesh position={[0.08, 0.3, 0]}>
+        <capsuleGeometry args={[0.05, 0.4]} />
+        <meshStandardMaterial color="#1f2937" />
+      </mesh>
+    </group>
+  )
+}
+
+function TennisCourtComplex({ position = [0, 0, 0] }) {
+  return (
+    <group position={position}>
+      {/* Tennis court surface */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[12, 8]} />
+        <meshStandardMaterial color="#4ade80" />
+      </mesh>
+      {/* Court lines */}
+      <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.1, 8]} />
+        <meshStandardMaterial color="#ffffff" />
+      </mesh>
+      <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, Math.PI / 2]}>
+        <planeGeometry args={[0.1, 12]} />
+        <meshStandardMaterial color="#ffffff" />
+      </mesh>
+      {/* Net */}
+      <mesh position={[0, 0.5, 0]}>
+        <boxGeometry args={[0.05, 1, 8]} />
+        <meshStandardMaterial color="#6b7280" />
+      </mesh>
+      {/* Net posts */}
+      {[-4.2, 4.2].map((z, i) => (
+        <mesh key={`net-post-${i}`} position={[0, 0.75, z]}>
+          <cylinderGeometry args={[0.05, 0.05, 1.5]} />
+          <meshStandardMaterial color="#374151" />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+function BasketballCourt({ position = [0, 0, 0] }) {
+  return (
+    <group position={position}>
+      {/* Court surface */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[15, 10]} />
+        <meshStandardMaterial color="#f97316" />
+      </mesh>
+      {/* Court lines */}
+      <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[2, 2.1, 32]} />
+        <meshStandardMaterial color="#ffffff" />
+      </mesh>
+      {/* Basketball hoops */}
+      {[-6, 6].map((x, i) => (
+        <group key={`hoop-${i}`} position={[x, 0, 0]}>
+          <mesh position={[0, 3, 0]}>
+            <cylinderGeometry args={[0.05, 0.05, 6]} />
+            <meshStandardMaterial color="#6b7280" />
+          </mesh>
+          <mesh position={[0, 3, 0]}>
+            <torusGeometry args={[0.45, 0.03, 8, 32]} />
+            <meshStandardMaterial color="#dc2626" />
+          </mesh>
+          {/* Backboard */}
+          <mesh position={[0, 3.5, -0.1]}>
+            <boxGeometry args={[1.8, 1.2, 0.1]} />
+            <meshStandardMaterial color="#ffffff" />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  )
+}
+
+function SwimmingPoolComplex({ position = [0, 0, 0] }) {
+  return (
+    <group position={position}>
+      {/* Pool structure */}
+      <mesh position={[0, -0.5, 0]}>
+        <boxGeometry args={[12, 1, 6]} />
+        <meshStandardMaterial color="#0ea5e9" transparent opacity={0.8} />
+      </mesh>
+      {/* Pool deck */}
+      <mesh position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[16, 10]} />
+        <meshStandardMaterial color="#e5e7eb" />
+      </mesh>
+      {/* Lane dividers */}
+      {[-2, -1, 0, 1, 2].map((x, i) => (
+        <mesh key={`lane-${i}`} position={[x * 2, -0.4, 0]}>
+          <boxGeometry args={[0.1, 0.2, 6]} />
+          <meshStandardMaterial color="#dc2626" />
+        </mesh>
+      ))}
+      {/* Diving board */}
+      <group position={[0, 0, -4]}>
+        <mesh position={[0, 0.5, 0]}>
+          <cylinderGeometry args={[0.1, 0.1, 1]} />
+          <meshStandardMaterial color="#6b7280" />
+        </mesh>
+        <mesh position={[0, 0.55, 0.8]}>
+          <boxGeometry args={[0.5, 0.1, 1.5]} />
+          <meshStandardMaterial color="#3b82f6" />
+        </mesh>
+      </group>
+    </group>
+  )
+}
+
+function GreenhouseComplex({ position = [0, 0, 0] }) {
+  return (
+    <group position={position}>
+      {/* Greenhouse structure */}
+      <mesh position={[0, 1, 0]}>
+        <boxGeometry args={[8, 2, 4]} />
+        <meshStandardMaterial color="#10b981" transparent opacity={0.3} />
+      </mesh>
+      {/* Greenhouse frame */}
+      <mesh position={[0, 1, 0]}>
+        <boxGeometry args={[8.1, 2.1, 4.1]} />
+        <meshStandardMaterial color="#374151" wireframe />
+      </mesh>
+      {/* Plants inside */}
+      {Array.from({ length: 12 }, (_, i) => (
+        <mesh key={`plant-${i}`} position={[((i % 4) - 1.5) * 1.5, 0.3, Math.floor(i / 4) - 1]}>
+          <sphereGeometry args={[0.2]} />
+          <meshStandardMaterial color="#22c55e" />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+function FlagPole({ position = [0, 0, 0] }) {
+  return (
+    <group position={position}>
+      {/* Pole */}
+      <mesh position={[0, 4, 0]}>
+        <cylinderGeometry args={[0.05, 0.05, 8]} />
+        <meshStandardMaterial color="#6b7280" />
+      </mesh>
+      {/* Flag */}
+      <mesh position={[0.8, 6.5, 0]}>
+        <planeGeometry args={[1.5, 1]} />
+        <meshStandardMaterial color="#f97316" />
+      </mesh>
+      {/* Base */}
+      <mesh position={[0, 0.2, 0]}>
+        <cylinderGeometry args={[0.3, 0.3, 0.4]} />
+        <meshStandardMaterial color="#374151" />
+      </mesh>
+    </group>
+  )
+}
+
+function HostelBuilding({ position = [0, 0, 0] }) {
+  return (
+    <Float speed={0.7} rotationIntensity={0.08} floatIntensity={0.15}>
+      <group position={position}>
+        {/* Main building */}
+        <mesh position={[0, 2, 0]}>
+          <boxGeometry args={[6, 4, 4]} />
+          <meshStandardMaterial color="#a855f7" />
+        </mesh>
+        {/* Windows */}
+        {[-2, -1, 0, 1, 2].map((x, i) => (
+          <mesh key={`hostel-window-${i}`} position={[x, 1.5, 2.01]}>
+            <boxGeometry args={[0.5, 0.8, 0.05]} />
+            <meshStandardMaterial color="#3b82f6" />
+          </mesh>
+        ))}
+        <Text position={[0, 4.5, 2.1]} fontSize={0.2} color="#ffffff" anchorX="center" anchorY="middle">
+          STUDENT HOSTEL
+        </Text>
+      </group>
+    </Float>
+  )
+}
+
+function MedicalCenter({ position = [0, 0, 0] }) {
+  return (
+    <Float speed={0.8} rotationIntensity={0.1} floatIntensity={0.12}>
+      <group position={position}>
+        {/* Main building */}
+        <mesh position={[0, 1.5, 0]}>
+          <boxGeometry args={[5, 3, 3]} />
+          <meshStandardMaterial color="#f472b6" />
+        </mesh>
+        {/* Red cross symbol */}
+        <mesh position={[0, 3.2, 0]}>
+          <boxGeometry args={[1.5, 0.3, 0.1]} />
+          <meshStandardMaterial color="#ef4444" />
+        </mesh>
+        <mesh position={[0, 3.2, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <boxGeometry args={[1.5, 0.3, 0.1]} />
+          <meshStandardMaterial color="#ef4444" />
+        </mesh>
+        {/* Windows */}
+        {[-1.5, -0.5, 0.5, 1.5].map((x, i) => (
+          <mesh key={`medical-window-${i}`} position={[x, 1.2, 1.51]}>
+            <boxGeometry args={[0.4, 0.6, 0.05]} />
+            <meshStandardMaterial color="#3b82f6" />
+          </mesh>
+        ))}
+        <Text position={[0, 3.8, 1.6]} fontSize={0.18} color="#ffffff" anchorX="center" anchorY="middle">
+          MEDICAL CENTER
+        </Text>
+      </group>
+    </Float>
+  )
+}
+
+function CanteenComplex({ position = [0, 0, 0] }) {
+  return (
+    <Float speed={0.9} rotationIntensity={0.1} floatIntensity={0.18}>
+      <group position={position}>
+        {/* Main building */}
+        <mesh position={[0, 1.2, 0]}>
+          <boxGeometry args={[7, 2.4, 3.5]} />
+          <meshStandardMaterial color="#fb923c" />
+        </mesh>
+        {/* Tables and chairs */}
+        {[-2, 2].map((x, i) =>
+          [-1, 1].map((z, j) => (
+            <group key={`canteen-table-${i}-${j}`} position={[x * 2, 0.5, z * 1.5]}>
+              <mesh position={[0, 0.2, 0]}>
+                <cylinderGeometry args={[0.4, 0.4, 0.1]} />
+                <meshStandardMaterial color="#6b7280" />
+              </mesh>
+              <mesh position={[0, 0.5, 0]}>
+                <boxGeometry args={[1, 0.1, 0.5]} />
+                <meshStandardMaterial color="#d97706" />
+              </mesh>
+            </group>
+          )),
+        )}
+        <Text position={[0, 3, 1.8]} fontSize={0.2} color="#ffffff" anchorX="center" anchorY="middle">
+          CANTEEN
+        </Text>
+      </group>
+    </Float>
+  )
+}
+
+function TransportHub({ position = [0, 0, 0] }) {
+  return (
+    <Float speed={0.6} rotationIntensity={0.05} floatIntensity={0.1}>
+      <group position={position}>
+        {/* Main structure */}
+        <mesh position={[0, 1, 0]}>
+          <boxGeometry args={[6, 2, 4]} />
+          <meshStandardMaterial color="#64748b" />
+        </mesh>
+        {/* Bus stop signs */}
+        {[-2, 2].map((x, i) => (
+          <mesh key={`bus-stop-${i}`} position={[x * 2, 2.5, 0]}>
+            <boxGeometry args={[0.5, 1, 0.1]} />
+            <meshStandardMaterial color="#eab308" />
+          </mesh>
+        ))}
+        <Text position={[0, 2.8, 2.1]} fontSize={0.18} color="#ffffff" anchorX="center" anchorY="middle">
+          TRANSPORT HUB
+        </Text>
+      </group>
+    </Float>
+  )
+}
+
+function ResearchCenter({ position = [0, 0, 0] }) {
+  return (
+    <Float speed={0.7} rotationIntensity={0.08} floatIntensity={0.15}>
+      <group position={position}>
+        {/* Main building */}
+        <mesh position={[0, 1.8, 0]}>
+          <boxGeometry args={[5.5, 3.6, 3]} />
+          <meshStandardMaterial color="#4338ca" />
+        </mesh>
+        {/* Satellite dish */}
+        <mesh position={[0, 4.5, 0]}>
+          <cylinderGeometry args={[1, 0.1, 0.1]} />
+          <meshStandardMaterial color="#9ca3af" />
+        </mesh>
+        {/* Windows */}
+        {[-1.5, -0.5, 0.5, 1.5].map((x, i) => (
+          <mesh key={`research-window-${i}`} position={[x, 1.5, 1.51]}>
+            <boxGeometry args={[0.4, 0.7, 0.05]} />
+            <meshStandardMaterial color="#3b82f6" />
+          </mesh>
+        ))}
+        <Text position={[0, 4, 1.6]} fontSize={0.18} color="#ffffff" anchorX="center" anchorY="middle">
+          RESEARCH CENTER
+        </Text>
+      </group>
+    </Float>
+  )
+}
+
+function PlayingStudent({ position = [0, 0, 0], color = "#3b82f6", activity = "swing" }) {
+  const studentRef = useRef()
+
+  useFrame((state) => {
+    if (studentRef.current) {
+      const time = state.clock.elapsedTime
+
+      switch (activity) {
+        case "swing":
+          // Swinging motion
+          studentRef.current.rotation.z = Math.sin(time * 2) * 0.3
+          studentRef.current.position.y = position[1] + Math.abs(Math.sin(time * 2)) * 0.2
+          break
+        case "slide":
+          // Sliding motion
+          const slideProgress = (Math.sin(time * 0.5) + 1) / 2
+          studentRef.current.position.y = position[1] + slideProgress * 1.5
+          studentRef.current.rotation.x = slideProgress * -0.3
+          break
+        case "seesaw":
+          // Seesaw motion
+          studentRef.current.position.y = position[1] + Math.sin(time * 1.5) * 0.3
+          studentRef.current.rotation.z = Math.sin(time * 1.5) * 0.2
+          break
+        case "running":
+          // Running in circle
+          const radius = 2
+          studentRef.current.position.x = position[0] + Math.cos(time) * radius
+          studentRef.current.position.z = position[2] + Math.sin(time) * radius
+          studentRef.current.rotation.y = time
+          // Running animation
+          const runCycle = Math.sin(time * 10) * 0.15
+          studentRef.current.position.y = position[1] + Math.abs(runCycle)
+          break
+        case "jumping":
+          // Jumping motion
+          const jumpHeight = Math.max(0, Math.sin(time * 4)) * 0.8
+          studentRef.current.position.y = position[1] + jumpHeight
+          break
+      }
+    }
+  })
+
+  return (
+    <group ref={studentRef} position={position}>
+      {/* Student body */}
+      <mesh position={[0, 0.8, 0]}>
+        <capsuleGeometry args={[0.15, 0.6]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+      {/* Student head */}
+      <mesh position={[0, 1.3, 0]}>
+        <sphereGeometry args={[0.12]} />
+        <meshStandardMaterial color="#fdbcb4" />
+      </mesh>
+      {/* Backpack */}
+      <mesh position={[0, 0.9, -0.12]}>
+        <boxGeometry args={[0.2, 0.3, 0.1]} />
+        <meshStandardMaterial color="#dc2626" />
+      </mesh>
+      {/* Arms */}
+      <mesh position={[-0.12, 0.7, 0]}>
+        <capsuleGeometry args={[0.04, 0.3]} />
+        <meshStandardMaterial color="#fdbcb4" />
+      </mesh>
+      <mesh position={[0.12, 0.7, 0]}>
+        <capsuleGeometry args={[0.04, 0.3]} />
+        <meshStandardMaterial color="#fdbcb4" />
+      </mesh>
+      {/* Legs */}
+      <mesh position={[-0.08, 0.3, 0]}>
+        <capsuleGeometry args={[0.05, 0.4]} />
+        <meshStandardMaterial color="#1f2937" />
+      </mesh>
+      <mesh position={[0.08, 0.3, 0]}>
+        <capsuleGeometry args={[0.05, 0.4]} />
+        <meshStandardMaterial color="#1f2937" />
+      </mesh>
+    </group>
+  )
+}
+
+function AdditionalWalkingStudents() {
+  const students = [
+    {
+      id: 11,
+      path: [
+        [8, 0, 8],
+        [8, 0, -8],
+        [-8, 0, -8],
+        [-8, 0, 8],
+      ],
+      color: "#f472b6",
+    },
+    {
+      id: 12,
+      path: [
+        [-10, 0, 0],
+        [0, 0, 10],
+        [10, 0, 0],
+        [0, 0, -10],
+      ],
+      color: "#a78bfa",
+    },
+    {
+      id: 13,
+      path: [
+        [6, 0, 6],
+        [-6, 0, 6],
+        [-6, 0, -6],
+        [6, 0, -6],
+      ],
+      color: "#34d399",
+    },
+    {
+      id: 14,
+      path: [
+        [0, 0, 12],
+        [12, 0, 0],
+        [0, 0, -12],
+        [-12, 0, 0],
+      ],
+      color: "#fbbf24",
+    },
+    {
+      id: 15,
+      path: [
+        [15, 0, 5],
+        [5, 0, 15],
+        [-5, 0, 5],
+        [-15, 0, -5],
+      ],
+      color: "#fb7185",
+    },
+    {
+      id: 16,
+      path: [
+        [-8, 0, 12],
+        [8, 0, 12],
+        [8, 0, -4],
+        [-8, 0, -4],
+      ],
+      color: "#60a5fa",
+    },
+    {
+      id: 17,
+      path: [
+        [10, 0, 10],
+        [-10, 0, 10],
+        [-10, 0, -10],
+        [10, 0, -10],
+      ],
+      color: "#a3e635",
+    },
+    {
+      id: 18,
+      path: [
+        [4, 0, 0],
+        [4, 0, 8],
+        [-4, 0, 8],
+        [-4, 0, 0],
+      ],
+      color: "#f97316",
+    },
+    {
+      id: 19,
+      path: [
+        [0, 0, 6],
+        [6, 0, 0],
+        [0, 0, -6],
+        [-6, 0, 0],
+      ],
+      color: "#e879f9",
+    },
+    {
+      id: 20,
+      path: [
+        [12, 0, 6],
+        [0, 0, 14],
+        [-12, 0, 6],
+        [0, 0, -2],
+      ],
+      color: "#22d3ee",
+    },
+  ]
+
+  return (
+    <>
+      {students.map((student) => (
+        <AnimatedStudent key={student.id} walkPath={student.path} color={student.color} />
+      ))}
+    </>
+  )
+}
+
 function Enhanced3DCampusScene() {
+  const studentPaths = [
+    [
+      [0, 0, 12], // Entrance
+      [0, 0, 8], // Playground
+      [-8, 0, -2], // Library
+      [8, 0, -1], // Science Lab
+      [0, 0, 0], // Main Building
+    ],
+    [
+      [-8, 0, 8], // Parking
+      [-6, 0, 4], // Cafeteria
+      [0, 0, 0], // Main Building
+      [6, 0, 6], // Sports Complex
+      [0, 0, 8], // Playground
+    ],
+    [
+      [8, 0, -1], // Science Lab
+      [10, 0, 2], // Art Building
+      [0, 0, -8], // Auditorium
+      [-12, 0, -6], // Admin Building
+      [0, 0, 0], // Main Building
+    ],
+    [
+      [-18, 0, 0], // Hostel
+      [-12, 0, 12], // Transport Hub
+      [0, 0, 18], // Canteen Complex
+      [12, 0, 12], // Research Center
+      [18, 0, 0], // Medical Center
+    ],
+    [
+      [15, 0, 5], // Tennis Court
+      [0, 0, -15], // Swimming Pool
+      [-15, 0, 5], // Basketball Court
+      [12, 0, -8], // Greenhouse
+      [0, 0, 15], // Flag Pole
+    ],
+  ]
+
   return (
     <>
       <ambientLight intensity={0.7} />
@@ -665,99 +1448,134 @@ function Enhanced3DCampusScene() {
       <directionalLight position={[-15, 15, -10]} intensity={0.6} />
       <pointLight position={[0, 10, 0]} intensity={0.5} color="#fbbf24" />
 
-      {/* <fog attach="fog" args={["#f8fafc", 15, 50]} /> */}
       <color attach="background" args={["#ffffff"]} />
 
-      {/* Campus Ground with realistic texture */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]}>
-        <planeGeometry args={[60, 60]} />
-        <meshStandardMaterial color="#84cc16" />
+      {/* Campus Ground */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.1, 0]}>
+        <planeGeometry args={[80, 80]} />
+        <meshStandardMaterial color="#22c55e" />
       </mesh>
 
-      {/* Main Buildings */}
+      {/* Enhanced Campus Pathways */}
+      <CampusPathways />
+
+      {/* All Buildings */}
       <MainBuilding position={[0, 0, 0]} />
       <LibraryBuilding position={[-8, 0, -2]} />
       <ScienceLabBuilding position={[8, 0, -1]} />
-      <Auditorium position={[0, 0, -10]} />
+      <Auditorium position={[0, 0, -8]} />
       <Cafeteria position={[-6, 0, 4]} />
       <SportsComplex position={[6, 0, 6]} />
-
+      <AdministrativeBuilding position={[-12, 0, -6]} />
       <ComputerLabBuilding position={[-10, 0, 2]} />
       <ArtMusicBuilding position={[10, 0, 2]} />
-      <AdministrativeBuilding position={[-12, 0, -6]} />
 
-      {/* Recreational Areas */}
-      <EnhancedPlayground position={[0, 0, 10]} />
-      <ParkingArea position={[-10, 0, 10]} />
-      <GardenArea position={[10, 0, 10]} />
+      {/* Enhanced Facilities */}
+      <EnhancedPlayground position={[0, 0, 8]} />
+      <ParkingArea position={[-8, 0, 8]} />
+      <GardenArea position={[8, 0, 8]} />
+      <SecurityGate position={[0, 0, 12]} />
+      <WaterTank position={[15, 0, -8]} />
+      <SolarPanels position={[-15, 0, 8]} />
+      <WeatherStation position={[-8, 0, -12]} />
 
-      {/* Enhanced tree placement around campus */}
-      {[
-        [-15, 0, -8, "oak"],
-        [-12, 0, 0, "pine"],
-        [-8, 0, -12, "maple"],
-        [-4, 0, -14, "palm"],
-        [4, 0, -14, "oak"],
-        [8, 0, -12, "pine"],
-        [12, 0, -8, "maple"],
-        [15, 0, -4, "palm"],
-        [15, 0, 4, "oak"],
-        [12, 0, 8, "pine"],
-        [8, 0, 12, "maple"],
-        [4, 0, 14, "palm"],
-        [-4, 0, 14, "oak"],
-        [-8, 0, 12, "pine"],
-        [-12, 0, 8, "maple"],
-        [-15, 0, 4, "palm"],
-        [-6, 0, -8, "oak"],
-        [6, 0, -8, "pine"],
-        [0, 0, 14, "maple"],
-        [-14, 0, -2, "oak"],
-        [14, 0, -2, "pine"],
-      ].map(([x, y, z, type], i) => (
-        <EnhancedTree key={i} position={[x, y, z]} treeType={type} />
-      ))}
+      <StaticBus position={[12, 0, 0]} />
 
-      {/* Enhanced pathway system */}
-      {/* Main north-south pathway */}
-      <mesh position={[0, -0.9, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[3, 30]} />
-        <meshStandardMaterial color="#94a3b8" />
-      </mesh>
-      {/* Main east-west pathway */}
-      <mesh position={[0, -0.9, 0]} rotation={[-Math.PI / 2, 0, Math.PI / 2]}>
-        <planeGeometry args={[3, 30]} />
-        <meshStandardMaterial color="#94a3b8" />
-      </mesh>
-      {/* Connecting pathways */}
-      {[
-        [-8, -0.88, -2, 0, 2, 8],
-        [8, -0.88, -1, 0, 2, 8],
-        [-6, -0.88, 4, Math.PI / 2, 2, 6],
-        [6, -0.88, 6, Math.PI / 2, 2, 6],
-      ].map(([x, y, z, rotation, width, length], i) => (
-        <mesh key={`path-${i}`} position={[x, y, z]} rotation={[-Math.PI / 2, 0, rotation]}>
-          <planeGeometry args={[width, length]} />
-          <meshStandardMaterial color="#94a3b8" />
-        </mesh>
-      ))}
+      <AnimatedStudent position={[0, 0, 12]} color="#3b82f6" walkPath={studentPaths[0]} />
+      <AnimatedStudent position={[-8, 0, 8]} color="#dc2626" walkPath={studentPaths[1]} />
+      <AnimatedStudent position={[8, 0, -1]} color="#059669" walkPath={studentPaths[2]} />
+      <AnimatedStudent position={[-18, 0, 0]} color="#7c3aed" walkPath={studentPaths[3]} />
+      <AnimatedStudent position={[15, 0, 5]} color="#f59e0b" walkPath={studentPaths[4]} />
 
-      {/* Campus entrance gate */}
-      <group position={[0, 0, -18]}>
-        {[-3, 3].map((x, i) => (
-          <mesh key={`gate-post-${i}`} position={[x, 2, 0]}>
-            <boxGeometry args={[0.5, 4, 0.5]} />
-            <meshStandardMaterial color="#1f2937" />
-          </mesh>
-        ))}
-        <mesh position={[0, 3.5, 0]}>
-          <boxGeometry args={[6, 0.8, 0.3]} />
-          <meshStandardMaterial color="#1f2937" />
-        </mesh>
-        <Text position={[0, 3.5, 0.2]} fontSize={0.3} color="#fbbf24" anchorX="center" anchorY="middle">
-          WELCOME TO CHHATRAPATI SHIVAJI+2 HIGH SCHOOL
-        </Text>
-      </group>
+      {/* Additional walking students */}
+      <AnimatedStudent
+        position={[2, 0, 5]}
+        color="#ec4899"
+        walkPath={[
+          [2, 0, 5],
+          [6, 0, 6],
+          [0, 0, 8],
+          [-6, 0, 4],
+          [2, 0, 5],
+        ]}
+      />
+      <AnimatedStudent
+        position={[-3, 0, -2]}
+        color="#06b6d4"
+        walkPath={[
+          [-3, 0, -2],
+          [-8, 0, -2],
+          [0, 0, 0],
+          [8, 0, -1],
+          [-3, 0, -2],
+        ]}
+      />
+      <AnimatedStudent
+        position={[5, 0, 3]}
+        color="#8b5cf6"
+        walkPath={[
+          [5, 0, 3],
+          [10, 0, 2],
+          [0, 0, -8],
+          [-10, 0, 2],
+          [5, 0, 3],
+        ]}
+      />
+      <AnimatedStudent
+        position={[-5, 0, 10]}
+        color="#f97316"
+        walkPath={[
+          [-5, 0, 10],
+          [0, 0, 15],
+          [12, 0, 12],
+          [18, 0, 0],
+          [-5, 0, 10],
+        ]}
+      />
+      <AnimatedStudent
+        position={[8, 0, 12]}
+        color="#84cc16"
+        walkPath={[
+          [8, 0, 12],
+          [0, 0, 18],
+          [-12, 0, 12],
+          [-18, 0, 0],
+          [8, 0, 12],
+        ]}
+      />
+
+      <AdditionalWalkingStudents />
+
+      {/* Playing students in playground */}
+      <PlayingStudent position={[-1, 0, 9]} color="#ef4444" activity="swing" />
+      <PlayingStudent position={[1, 0, 9]} color="#3b82f6" activity="slide" />
+      <PlayingStudent position={[0, 0, 7]} color="#10b981" activity="seesaw" />
+      <PlayingStudent position={[3, 0, 8]} color="#f59e0b" activity="jumping" />
+      <PlayingStudent position={[6, 0, 6]} color="#8b5cf6" activity="running" />
+
+      {/* Playing students in sports areas */}
+      <PlayingStudent position={[15, 0, 6]} color="#ec4899" activity="running" />
+      <PlayingStudent position={[-15, 0, 6]} color="#06b6d4" activity="jumping" />
+      <PlayingStudent position={[0, 0, -14]} color="#f97316" activity="running" />
+
+      <PlayingStudent position={[-12, 0, 8]} color="#84cc16" activity="jumping" />
+      <PlayingStudent position={[8, 0, -12]} color="#06b6d4" activity="swing" />
+      <PlayingStudent position={[-6, 0, -8]} color="#f59e0b" activity="running" />
+      <PlayingStudent position={[14, 0, -6]} color="#8b5cf6" activity="seesaw" />
+      <PlayingStudent position={[-14, 0, -8]} color="#ef4444" activity="jumping" />
+
+      {Array.from({ length: 25 }, (_, i) => {
+        const angle = (i / 25) * Math.PI * 2
+        const radius = 20 + Math.random() * 15
+        const x = Math.cos(angle) * radius
+        const z = Math.sin(angle) * radius
+        const treeTypes = ["oak", "pine", "maple", "palm"]
+        const treeType = treeTypes[i % 4]
+
+        return <EnhancedTree key={`random-tree-${i}`} position={[x, 0, z]} treeType={treeType} />
+      })}
+
+      <Scene3DControls />
     </>
   )
 }
@@ -785,6 +1603,8 @@ function CustomButton({ children, className = "", variant = "default", ...props 
 function Scene3DControls() {
   const controlsRef = useRef()
 
+  window.cameraControls = controlsRef
+
   return (
     <OrbitControls
       ref={controlsRef}
@@ -802,79 +1622,116 @@ function Scene3DControls() {
 }
 
 function CameraControlButtons() {
+  const [currentView, setCurrentView] = useState("overview")
+
   const handleZoomIn = () => {
-    // Camera zoom will be handled by OrbitControls mouse/touch events
-    console.log("[v0] Zoom in clicked")
+    if (window.cameraControls?.current) {
+      const controls = window.cameraControls.current
+      const camera = controls.object
+      const distance = camera.position.distanceTo(controls.target)
+      const newDistance = Math.max(distance - 2, 12)
+
+      const direction = camera.position.clone().sub(controls.target).normalize()
+      camera.position.copy(controls.target).add(direction.multiplyScalar(newDistance))
+      controls.update()
+    }
   }
 
   const handleZoomOut = () => {
-    // Camera zoom will be handled by OrbitControls mouse/touch events
-    console.log("[v0] Zoom out clicked")
+    if (window.cameraControls?.current) {
+      const controls = window.cameraControls.current
+      const camera = controls.object
+      const distance = camera.position.distanceTo(controls.target)
+      const newDistance = Math.min(distance + 2, 40)
+
+      const direction = camera.position.clone().sub(controls.target).normalize()
+      camera.position.copy(controls.target).add(direction.multiplyScalar(newDistance))
+      controls.update()
+    }
   }
 
   const handleRotateLeft = () => {
-    // Camera rotation will be handled by OrbitControls mouse/touch events
-    console.log("[v0] Rotate left clicked")
+    if (window.cameraControls?.current) {
+      const controls = window.cameraControls.current
+      controls.autoRotateSpeed = -2
+      setTimeout(() => {
+        controls.autoRotateSpeed = 0.3
+      }, 500)
+    }
   }
 
   const handleRotateRight = () => {
-    // Camera rotation will be handled by OrbitControls mouse/touch events
-    console.log("[v0] Rotate right clicked")
+    if (window.cameraControls?.current) {
+      const controls = window.cameraControls.current
+      controls.autoRotateSpeed = 2
+      setTimeout(() => {
+        controls.autoRotateSpeed = 0.3
+      }, 500)
+    }
   }
 
   const handleReset = () => {
-    // Reset will be handled by OrbitControls
-    console.log("[v0] Reset clicked")
+    if (window.cameraControls?.current) {
+      const controls = window.cameraControls.current
+      controls.reset()
+      controls.autoRotateSpeed = 0.3
+      setCurrentView("overview")
+    }
   }
 
   return (
-    <div className="absolute top-2 right-2 lg:top-4 lg:right-4 z-10 flex flex-col gap-1 lg:gap-2">
+    <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+      {/* Zoom In */}
       <button
         onClick={handleZoomIn}
-        className="w-8 h-8 lg:w-10 lg:h-10 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg shadow-lg border border-white/30 flex items-center justify-center text-gray-700 hover:text-gray-900 transition-all duration-200 hover:scale-105 active:scale-95"
+        className="bg-white/90 hover:bg-white text-gray-800 p-1.5 rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
         title="Zoom In"
       >
-        <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
         </svg>
       </button>
 
+      {/* Zoom Out */}
       <button
         onClick={handleZoomOut}
-        className="w-8 h-8 lg:w-10 lg:h-10 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg shadow-lg border border-white/30 flex items-center justify-center text-gray-700 hover:text-gray-900 transition-all duration-200 hover:scale-105 active:scale-95"
+        className="bg-white/90 hover:bg-white text-gray-800 p-1.5 rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
         title="Zoom Out"
       >
-        <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 12H6" />
         </svg>
       </button>
 
+      {/* Rotate Left */}
       <button
         onClick={handleRotateLeft}
-        className="w-8 h-8 lg:w-10 lg:h-10 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg shadow-lg border border-white/30 flex items-center justify-center text-gray-700 hover:text-gray-900 transition-all duration-200 hover:scale-105 active:scale-95"
+        className="bg-white/90 hover:bg-white text-gray-800 p-1.5 rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
         title="Rotate Left"
       >
-        <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
+      {/* Rotate Right */}
       <button
         onClick={handleRotateRight}
-        className="w-8 h-8 lg:w-10 lg:h-10 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg shadow-lg border border-white/30 flex items-center justify-center text-gray-700 hover:text-gray-900 transition-all duration-200 hover:scale-105 active:scale-95"
+        className="bg-white/90 hover:bg-white text-gray-800 p-1.5 rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
         title="Rotate Right"
       >
-        <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </button>
 
+      {/* Reset View */}
       <button
         onClick={handleReset}
-        className="w-8 h-8 lg:w-10 lg:h-10 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg shadow-lg border border-white/30 flex items-center justify-center text-gray-700 hover:text-gray-900 transition-all duration-200 hover:scale-105 active:scale-95"
+        className="bg-white/90 hover:bg-white text-gray-800 p-1.5 rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
         title="Reset View"
       >
-        <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -889,7 +1746,7 @@ function CameraControlButtons() {
 
 export default function EnhancedCampusHero() {
   return (
-    <section className="relative w-full py-5 min-h-[90vh] max-h-[90vh] flex flex-col lg:flex-row items-center justify-center px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-green-50 overflow-hidden">
+    <section className="relative w-full min-h-[90vh] max-h-[90vh] flex flex-col lg:flex-row items-center justify-center px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-green-50 overflow-hidden">
       {/* Left Text Content */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}
@@ -907,7 +1764,7 @@ export default function EnhancedCampusHero() {
         </h1>
         <p className="text-gray-700 mt-1 lg:mt-4 text-xs sm:text-sm lg:text-base leading-relaxed text-pretty">
           Experience our comprehensive campus featuring modern academic buildings, advanced science laboratories,
-          computer labs, art & music studios, sports facilities, swimming pool, spacious auditorium, digital library,
+          computer labs, art & music studios, sports facilities, spacious auditorium, digital library,
           and beautiful recreational areas designed for complete student development and excellence in education.
         </p>
 
@@ -923,7 +1780,7 @@ export default function EnhancedCampusHero() {
           </div>
           <div className="flex items-center space-x-1 lg:space-x-2">
             <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-            <span className="truncate">Sports & Swimming</span>
+            <span className="truncate">Sports</span>
           </div>
           <div className="flex items-center space-x-1 lg:space-x-2">
             <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></div>
@@ -976,7 +1833,7 @@ export default function EnhancedCampusHero() {
         <CameraControlButtons />
 
         <div
-          className="absolute bottom-7 left-2 lg:bottom-4 lg:left-4 text-gray-900 text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-2 rounded-lg shadow-lg border border-gray-200"
+          className="absolute bottom-7 left-2 lg:bottom-3 lg:left-3 text-gray-900 text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-2 rounded-lg shadow-lg border border-gray-200"
           style={{ backgroundColor: "rgba(255, 255, 255, 0.95)" }}
         >
           <div className="lg:hidden">Tap & drag to explore</div>

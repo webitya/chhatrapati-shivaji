@@ -41,8 +41,8 @@ export default function AdmissionPage() {
   ]
 
   const images = [
-    "/images/campus1.jpg",
-    "/images/campus2.jpg",
+    "/campus1.jpg",
+    "/campus2.jpg",
   ]
 
   return (
@@ -84,40 +84,47 @@ export default function AdmissionPage() {
       </section>
 
       {/* Requirements & Image Gallery */}
-      <section className="bg-gray-50 py-20 px-4 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
-        {/* Admission Requirements */}
-        <div>
-          <h2 className="text-3xl font-bold mb-6">Admission Requirements</h2>
-          <p className="text-muted-foreground mb-6">
-            Documents and information needed for application
-          </p>
-          <ul className="space-y-3">
-            {requirements.map((req, index) => (
-              <li key={index} className="flex items-center space-x-3">
-                <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
-                <span className="text-muted-foreground">{req}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+    <section className="relative bg-gradient-to-r from-yellow-400 to-[rgb(240,177,0)] py-24 px-6 lg:px-12">
+  <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    
+    {/* Left: Admission Requirements */}
+    <div className="bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-lg">
+      <h2 className="text-3xl font-bold mb-6 text-gray-900">Admission Requirements</h2>
+      <p className="text-gray-700 mb-6">
+        Documents and information needed for application
+      </p>
+      <ul className="space-y-3">
+        {requirements.map((req, index) => (
+          <li key={index} className="flex items-center space-x-3">
+            <CheckCircle className="w-5 h-5 text-blue-700 flex-shrink-0" />
+            <span className="text-gray-900">{req}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
 
-        {/* Image Gallery */}
-        <div>
-          <h2 className="text-3xl font-bold mb-6">Campus Life & Facilities</h2>
-          <p className="text-muted-foreground mb-6">Explore our vibrant campus and state-of-the-art facilities</p>
-          <div className="grid grid-cols-2 gap-4">
-            {images.map((src, index) => (
-              <div key={index} className="overflow-hidden rounded-lg shadow-lg">
-                <img
-                  src={src}
-                  alt={`Campus image ${index + 1}`}
-                  className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-            ))}
+    {/* Right: Campus Life & Facilities */}
+    <div className="space-y-6">
+      <h2 className="text-3xl font-bold text-gray-900">Campus Life & Facilities</h2>
+      <p className="text-gray-700">
+        Explore our vibrant campus and state-of-the-art facilities
+      </p>
+      <div className="grid grid-cols-2 gap-4">
+        {images.map((src, index) => (
+          <div key={index} className="overflow-hidden rounded-xl shadow-md">
+            <img
+              src={src}
+              alt={`Campus image ${index + 1}`}
+              className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
+            />
           </div>
-        </div>
-      </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+
     </MainLayout>
   )
 }

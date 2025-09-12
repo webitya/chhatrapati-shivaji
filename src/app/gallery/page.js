@@ -129,17 +129,30 @@ export default function GalleryPage() {
       </ContentSection>
 
       {/* Upload Section (for admin) */}
-      <ContentSection background="secondary" padding="default">
-        <div className="text-center space-y-6">
-          <h2 className="font-serif font-bold text-2xl text-white">Share Your Memories</h2>
-          <p className="text-white/90 max-w-2xl mx-auto">
-            Have photos from school events or activities? Contact our admin team to share them with the community.
-          </p>
-          <Button size="lg" className="bg-white text-secondary hover:bg-white/90 px-8 py-3 text-lg font-semibold">
-            Contact Admin
-          </Button>
-        </div>
-      </ContentSection>
+<ContentSection padding="default">
+  <div className="bg-[rgb(240,177,0)] py-16">
+    <div className="text-center space-y-6">
+      <h2 className="font-serif font-bold text-3xl text-gray-900">
+        Share Your Memories
+      </h2>
+      <p className="text-gray-800 max-w-2xl mx-auto text-lg leading-relaxed">
+        Have photos from school events or activities? Contact our admin team to share them with the community.
+      </p>
+      <Button 
+        size="lg" 
+        className="bg-blue-800 text-white font-semibold px-10 py-4 rounded-xl shadow-md hover:bg-blue-900 hover:shadow-lg transition-all"
+      >
+        Contact Admin
+      </Button>
+    </div>
+  </div>
+</ContentSection>
+
+
+
+
+
+
     </MainLayout>
   )
 }

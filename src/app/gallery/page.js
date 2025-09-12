@@ -2,6 +2,11 @@
 
 import { useState, useEffect } from "react"
 import MainLayout from "@/components/layout/main-layout"
+import ContentSection from "@/components/ui/content-section"
+import SectionHeader from "@/components/ui/section-header"
+import ImageCard from "@/components/ui/image-card"
+import LoadingSpinner from "@/components/ui/loading-spinner"
+import { Button } from "@/components/ui/button"
 import { Grid, List } from "lucide-react"
 
 export default function GalleryPage() {
@@ -10,124 +15,131 @@ export default function GalleryPage() {
   const [filterCategory, setFilterCategory] = useState("all")
   const [viewMode, setViewMode] = useState("grid")
 
-  const categories = ["all", "academic", "facilities", "sports", "arts", "events", "campus life"]
-
   useEffect(() => {
-    // Sample data for demo purposes
-    const sampleImages = [
-      { id: 1, url: "/school1.jpg", title: "Science Fair", description: "Students showcase their projects", category: "academic" },
-      { id: 2, url: "/school2.jpg", title: "Basketball Championship", description: "School basketball team event", category: "sports" },
-      { id: 3, url: "/school3.jpg", title: "Art Exhibition", description: "Annual student art exhibition", category: "arts" },
-      { id: 4, url: "/school4.jpg", title: "Campus Life", description: "Students enjoying campus facilities", category: "campus life" },
-      { id: 5, url: "/school5.jpg", title: "Music Concert", description: "Holiday music concert", category: "events" },
-      { id: 6, url: "/school6.jpg", title: "Library Reading", description: "Students reading in library", category: "academic" },
-    ]
-
-    setTimeout(() => {
-      setImages(sampleImages)
-      setLoading(false)
-    }, 1000)
+    fetchImages()
   }, [])
 
-  const filteredImages = images.filter(
-    (image) =>
-      filterCategory === "all" || (image.category && image.category.toLowerCase() === filterCategory.toLowerCase())
-  )
+  const fetchImages = async () => {
+    try {
+      const response = await fetch("/api/gallery")
+      if (response.ok) {
+        const data = await response.json()
+        setImages(data)
+      } else {
+        console.error("Failed to fetch images:", response.status)
+      }
+    } catch (error) {
+      console.error("Error fetching images:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const filteredImages = images.filter((image) => {
+    return (
+      filterCategory === "all" ||
+      (image.category && image.category.toLowerCase() === filterCategory.toLowerCase())
+    )
+  })
+
+  const categories = ["all", "academic", "facilities", "sports", "arts", "events", "campus life"]
 
   return (
     <MainLayout>
       {/* Hero Section */}
-      <section className="bg-primary text-white py-20 text-center">
-        <h1 className="text-4xl font-bold mb-4">School Gallery</h1>
-        <p className="text-lg max-w-2xl mx-auto">
-          Explore our vibrant school community through photos and memories
-        </p>
-      </section>
-
-      {/* Filter & View Controls */}
-      <section className="bg-gray-100 py-6 px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setFilterCategory(category)}
-              className={`px-4 py-2 rounded-full font-medium transition ${
-                filterCategory === category
-                  ? "bg-primary text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-primary hover:text-white"
-              }`}
-            >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
-            </button>
-          ))}
+      <ContentSection background="primary" padding="default">
+        <div className="text-center space-y-4">
+          <SectionHeader
+            title="School Gallery"
+            subtitle="Explore our vibrant school community through photos and memories"
+            centered
+          />
         </div>
+      </ContentSection>
 
-        <div className="flex gap-2 justify-center md:justify-end">
-          <button
-            onClick={() => setViewMode("grid")}
-            className={`p-2 rounded-full transition ${
-              viewMode === "grid" ? "bg-primary text-white" : "bg-white text-gray-700 border border-gray-300 hover:bg-primary hover:text-white"
-            }`}
-          >
-            <Grid className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => setViewMode("list")}
-            className={`p-2 rounded-full transition ${
-              viewMode === "list" ? "bg-primary text-white" : "bg-white text-gray-700 border border-gray-300 hover:bg-primary hover:text-white"
-            }`}
-          >
-            <List className="w-5 h-5" />
-          </button>
-        </div>
-      </section>
-
-      {/* Gallery */}
-      <section className="py-16 px-4 max-w-7xl mx-auto">
-        {loading ? (
-          <div className="text-center py-16 text-gray-500">Loading images...</div>
-        ) : filteredImages.length > 0 ? (
-          <div
-            className={`grid gap-6 ${
-              viewMode === "grid"
-                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-                : "grid-cols-1"
-            }`}
-          >
-            {filteredImages.map((image) => (
-              <div
-                key={image.id}
-                className="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition cursor-pointer"
+      {/* Filter and View Controls */}
+      <ContentSection background="muted" padding="sm">
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="flex gap-2 flex-wrap">
+            {categories.map((category) => (
+              <Button
+                key={category}
+                variant={filterCategory === category ? "default" : "outline"}
+                size="sm"
+                onClick={() => setFilterCategory(category)}
+                className="capitalize"
               >
-                <div className={viewMode === "list" ? "aspect-video" : "aspect-square"}>
-                  <img
-                    src={image.url || "/placeholder.svg"}
-                    alt={image.title || "School image"}
-                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                  />
-                </div>
-                <div className="p-4">
-                  {image.title && <h3 className="text-lg font-semibold mb-1">{image.title}</h3>}
-                  {image.description && <p className="text-gray-600 text-sm">{image.description}</p>}
-                </div>
-              </div>
+                {category}
+              </Button>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-16 text-gray-500">No images found in this category.</div>
-        )}
-      </section>
+          <div className="flex gap-2">
+            <Button
+              variant={viewMode === "grid" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("grid")}
+            >
+              <Grid className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={viewMode === "list" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("list")}
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </ContentSection>
 
-      {/* Contact Section */}
-      <section className="bg-secondary py-20 text-center text-white">
-        <h2 className="text-2xl font-bold mb-4">Share Your Memories</h2>
-        <p className="max-w-2xl mx-auto mb-6">
-          Have photos from school events or activities? Contact our admin team to share them with the community.
-        </p>
-        <button className="px-8 py-3 text-lg font-semibold bg-white text-secondary rounded hover:bg-white/90 transition">
-          Contact Admin
-        </button>
-      </section>
+      {/* Gallery */}
+      <ContentSection padding="lg">
+        {loading ? (
+          <div className="flex justify-center items-center py-16">
+            <LoadingSpinner size="lg" />
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {filteredImages.length > 0 ? (
+              <div
+                className={
+                  viewMode === "grid"
+                    ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                    : "grid grid-cols-1 md:grid-cols-2 gap-8"
+                }
+              >
+                {filteredImages.map((image) => (
+                  <ImageCard
+                    key={image.id || image._id}
+                    src={image.url || "/placeholder.svg"}
+                    alt={image.title || "School image"}
+                    title={image.title || "Untitled"}
+                    description={image.description || ""}
+                    aspectRatio={viewMode === "list" ? "aspect-video" : "aspect-square"}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <p className="text-muted-foreground text-lg">No images found in this category.</p>
+              </div>
+            )}
+          </div>
+        )}
+      </ContentSection>
+
+      {/* Upload Section (for admin) */}
+      <ContentSection background="secondary" padding="default">
+        <div className="text-center space-y-6">
+          <h2 className="font-serif font-bold text-2xl text-white">Share Your Memories</h2>
+          <p className="text-white/90 max-w-2xl mx-auto">
+            Have photos from school events or activities? Contact our admin team to share them with the community.
+          </p>
+          <Button size="lg" className="bg-white text-secondary hover:bg-white/90 px-8 py-3 text-lg font-semibold">
+            Contact Admin
+          </Button>
+        </div>
+      </ContentSection>
     </MainLayout>
   )
 }

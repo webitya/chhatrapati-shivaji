@@ -59,36 +59,59 @@ export default function AboutPage() {
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-16 px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div className="space-y-10">
-          <div>
-            <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
-            <p className="text-gray-600 leading-relaxed">
-              To provide a comprehensive, innovative education that challenges students academically,
-              develops their character, and prepares them to be confident, compassionate, and capable
-              leaders in an ever-changing world.
-            </p>
-          </div>
-          <div>
-            <h2 className="text-3xl font-bold mb-4">Our Vision</h2>
-            <p className="text-gray-600 leading-relaxed">
-              To be the premier educational institution that inspires lifelong learning, fosters
-              creativity and critical thinking, and graduates students who are equipped to solve
-              complex global challenges with integrity and innovation.
-            </p>
-          </div>
-        </div>
-        <div className="relative">
-          <div className="aspect-square rounded-2xl overflow-hidden shadow-xl">
-            <Image
-              src="/school-mission-vision.png"
-              alt="Our Mission and Vision"
-              fill
-              className="object-cover"
-            />
-          </div>
-        </div>
-      </section>
+<section className="py-16 px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+  <div className="space-y-8">
+    <h2 className="text-4xl font-extrabold mb-6 text-blue-700 border-l-4 border-blue-500 pl-3">
+      About Us
+    </h2>
+    <p className="text-gray-700 leading-relaxed text-lg">
+      At <span className="font-bold text-blue-600">Chhatrapati Shivaji School</span>, we believe
+      education is the foundation of a strong and progressive society. Guided by the leadership of our
+      Principal, <span className="font-bold text-green-600">Mr. Sikandar Kumar Yadav</span>, the school is
+      committed to nurturing young minds with knowledge, discipline, and values that prepare them for the
+      challenges of tomorrow.
+    </p>
+    <p className="text-gray-700 leading-relaxed text-lg">
+      Our institution emphasizes both academic excellence and holistic development. Along with a robust
+      curriculum, we encourage participation in{" "}
+      <span className="font-semibold text-yellow-600">sports</span>,{" "}
+      <span className="font-semibold text-purple-600">cultural programs</span>, and{" "}
+      <span className="font-semibold text-pink-600">community service</span>, ensuring our students grow
+      into confident, responsible, and compassionate individuals.
+    </p>
+    <p className="text-gray-700 leading-relaxed text-lg">
+      With a team of dedicated educators and modern learning resources,{" "}
+      <span className="font-bold text-blue-600">Chhatrapati Shivaji School</span> continues to inspire
+      students to dream big, think critically, and lead with integrity—just as the great Maratha leader,
+      Chhatrapati Shivaji Maharaj, envisioned for a strong and enlightened nation.
+    </p>
+
+    {/* Highlight Principal Card */}
+    <div className="mt-8 p-6 bg-gray-100 rounded-2xl shadow-md">
+      <h3 className="text-xl font-bold text-green-700">Principal's Message</h3>
+      <p className="text-gray-700 mt-2">
+        <span className="font-semibold text-green-600">Mr. Sikandar Kumar Yadav</span> leads with a
+        vision to shape disciplined, knowledgeable, and value-driven students who are prepared for a
+        brighter future.
+      </p>
+    </div>
+  </div>
+
+  {/* Smaller Image */}
+  <div className="relative w-160 h-160 mx-auto">
+    <div className="rounded-2xl overflow-hidden shadow-xl">
+      <Image
+        src="/about-us.png"
+        alt="About Chhatrapati Shivaji School"
+        fill
+        className="object-cover"
+      />
+    </div>
+  </div>
+</section>
+
+
+
 
       {/* Core Values */}
       <section className="bg-gray-100 py-16 px-6">
@@ -117,7 +140,7 @@ export default function AboutPage() {
         <div className="relative">
           <div className="aspect-video rounded-2xl overflow-hidden shadow-xl">
             <Image
-              src="/placeholder-9nsjm.png"
+              src="/award.jpg"
               alt="School History"
               fill
               className="object-cover"

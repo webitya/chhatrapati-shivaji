@@ -6,6 +6,7 @@ const EventSchema = new mongoose.Schema(
     date: { type: Date, required: true },
     description: { type: String, required: true },
     imageUrl: { type: String, required: true },
+    publicId: { type: String, required: true }, // 👈 required for Cloudinary cleanup
   },
   { timestamps: true }
 )

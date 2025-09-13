@@ -49,7 +49,7 @@ export default function AdminLoginPage() {
           </div>
           <div>
             <h1 className="font-serif font-bold text-2xl text-foreground">Admin Panel</h1>
-            <p className="text-muted-foreground">Bright Future School</p>
+            <p className="text-muted-foreground">Chhatrapati Shivaji+2 High School</p>
           </div>
         </CardHeader>
 

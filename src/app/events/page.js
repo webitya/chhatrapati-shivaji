@@ -97,7 +97,7 @@ export default function EventsPage() {
           Subscribe to our newsletter to receive updates about upcoming events and important school announcements.
         </p>
         <button className="px-8 py-3 text-lg font-semibold bg-white text-secondary rounded hover:bg-white/90 transition">
-          Subscribe to Updates.
+          Subscribe to Updates
         </button>
       </section>
     </MainLayout>
